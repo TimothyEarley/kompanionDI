@@ -23,7 +23,7 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile 'io.kotlintest:kotlintest-runner-junit5:3.0.0'
 }
 
 compileKotlin {

@@ -1,8 +1,8 @@
 package de.earley.companionDI.examples
 
 import de.earley.companionDI.Dependency
-import de.earley.companionDI.mockedBy
-import de.earley.companionDI.mocksOf
+import de.earley.companionDI.create
+import de.earley.companionDI.mocking.mockedBy
 import de.earley.companionDI.provide
 
 enum class Profile {
@@ -34,8 +34,8 @@ interface Service {
 
 	fun foo(): String
 
-	companion object : Dependency<Service, Profile> by provide({ _, injector ->
-		ServiceA(injector.inject(DB))
+	companion object : Dependency<Service, Profile> by provide({ _, inject ->
+		ServiceA(inject(DB))
 	})
 
 }
@@ -51,10 +51,10 @@ interface Printer {
 
 	fun print()
 
-	companion object : Dependency<Printer, Profile> by provide({ _, injector ->
+	companion object : Dependency<Printer, Profile> by provide({ _, inject ->
 		PrinterImpl(
-				injector.inject(DB),
-				injector.inject(Service)
+				inject(DB),
+				inject(Service)
 		)
 	})
 
@@ -87,6 +87,6 @@ fun main(args: Array<String>) {
 		override fun bar(): String = "Mocked"
 	}
 
-	val printerWithMock = Printer.create(Profile.Prod, mocksOf(DB mockedBy mockedDB))
+	val printerWithMock = Printer.create(Profile.Prod, DB mockedBy mockedDB)
 	printerWithMock.print()
 }

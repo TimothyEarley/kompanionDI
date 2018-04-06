@@ -1,6 +1,11 @@
 package de.earley.companionDI.examples
 
-import de.earley.companionDI.*
+import de.earley.companionDI.Dependency
+import de.earley.companionDI.Provider
+import de.earley.companionDI.create
+import de.earley.companionDI.mocking.mockedBy
+import de.earley.companionDI.mocking.mocksOf
+import de.earley.companionDI.provide
 
 interface Heater {
 	fun heat()
@@ -19,8 +24,8 @@ class ElectricHeater : Heater {
 interface Pump {
 	fun pump()
 
-	companion object : Dependency<Pump, Unit> by provide({ _, injector ->
-		Thermosiphon(injector.inject(Heater))
+	companion object : Dependency<Pump, Unit> by provide({ _, inject ->
+		Thermosiphon(inject(Heater))
 	})
 }
 
@@ -44,10 +49,10 @@ open class CoffeeMaker(
 		println("Coffee!")
 	}
 
-	companion object : Dependency<CoffeeMaker, Unit> by provide({ _, injector ->
+	companion object : Dependency<CoffeeMaker, Unit> by provide({ _, inject ->
 		CoffeeMaker(
-				injector.inject(Heater),
-				injector.inject(Pump)
+				inject(Heater),
+				inject(Pump)
 		)
 	})
 
@@ -58,8 +63,8 @@ class CoffeeShop(
 		val maker: CoffeeMaker
 ) {
 
-	companion object : Dependency<CoffeeShop, Unit> by provide({ _, injector ->
-		CoffeeShop(injector.inject(CoffeeMaker))
+	companion object : Dependency<CoffeeShop, Unit> by provide({ _, inject ->
+		CoffeeShop(inject(CoffeeMaker))
 	})
 
 }
@@ -78,8 +83,8 @@ fun main(args: Array<String>) {
 	}
 
 	// mock the maker
-	val mockedMaker: Provider<CoffeeMaker, Unit> = { _, injector ->
-		object : CoffeeMaker(injector.inject(Heater), injector.inject(Pump)) {
+	val mockedMaker: Provider<CoffeeMaker, Unit> = { _, inject ->
+		object : CoffeeMaker(inject(Heater), inject(Pump)) {
 			override fun brew() {
 				println("Mock brew!")
 				super.brew()
