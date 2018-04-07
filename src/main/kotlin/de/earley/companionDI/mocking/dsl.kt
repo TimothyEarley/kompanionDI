@@ -24,6 +24,7 @@ inline infix fun <reified T : Any, P> Dependency<T, P>.mockedBy(dependency: Depe
 
 
 //TODO document & test beanBy
+//TODO create variations for KClass
 
 infix fun <T : Any, P> Class<T>.beanBy(value: T): Mocking<T, P> =
 		Mocking.DirectMock(this, value)

@@ -3,16 +3,17 @@ package de.earley.companionDI
 import de.earley.companionDI.mocking.MockMap
 
 /**
- * Basic implementation satisfying the contract for de.earley.companionDI.create
+ * Mock the dependency or fall back onto the dependency
  * TODO test T with out variance
  */
-internal class MockableDependencyProvider<T, P>(
+class MockableDependencyProvider<T, P>(
 		private val clazz: Class<T>,
-		private val provider: Provider<T, P>
-) : Dependency<T, P> {
+		private val dependency: Dependency<T, P>
+): Dependency<T, P> {
 
-	override fun create(profile: P, mocks: MockMap<P>, mockable: Boolean): T =
-			if (mockable) mocks.get(clazz, profile) ?: provider.create(profile, mocks)
-			else provider.create(profile, mocks)
+	override fun create(profile: P, mocks: MockMap<P>, mockable: Boolean): T {
+		return if (mockable) mocks.get(clazz, profile) ?: dependency.create(profile, mocks, mockable)
+		else dependency.create(profile, mocks, mockable)
+	}
 
 }
