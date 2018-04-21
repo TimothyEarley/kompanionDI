@@ -3,6 +3,10 @@ package de.earley.companionDI.mocking
 import de.earley.companionDI.Dependency
 import de.earley.companionDI.Provider
 
+
+inline infix fun <reified D : Dependency<T,P>, T, P> D.mockCreateBy(dependency: D): Mocking<D, P> =
+		D::class.java.beanBy(dependency)
+
 /**
  * Mock the class T with a value/object
  */
