@@ -12,8 +12,12 @@ class MockableDependencyProvider<T, P>(
 ): Dependency<T, P> {
 
 	override fun create(profile: P, mocks: MockMap<P>, mockable: Boolean): T {
-		return if (mockable) mocks.get(clazz, profile) ?: dependency.create(profile, mocks, mockable)
+		return if (mockable) mockOrCreate(clazz, profile, mocks, dependency)
 		else dependency.create(profile, mocks, mockable)
 	}
 
 }
+
+internal fun <T, P> mockOrCreate(clazz: Class<T>, profile: P, mocks: MockMap<P>, dependency: Dependency<T, P>): T =
+		mocks.get(clazz, profile)
+				?: dependency.create(profile, mocks)

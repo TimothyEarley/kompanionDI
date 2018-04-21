@@ -2,6 +2,7 @@ package de.earley.companionDI.mocking
 
 import de.earley.companionDI.Dependency
 import de.earley.companionDI.Injector
+import de.earley.companionDI.MutableInjector
 import de.earley.companionDI.Provider
 
 sealed class Mocking<T : Any, P>(
@@ -20,7 +21,7 @@ sealed class Mocking<T : Any, P>(
 			private val provider: Provider<T, P>
 	) : Mocking<T, P>(clazz) {
 		override fun create(profile: P, mocks: MockMap<P>, mockable: Boolean): T =
-				provider(profile, Injector(profile, mocks))
+				provider(profile, MutableInjector(profile, mocks))
 	}
 
 }

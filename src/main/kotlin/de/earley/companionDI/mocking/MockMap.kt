@@ -32,3 +32,10 @@ internal class HashMockMap<P> : MutableMockMap<P> {
 		map[mock.clazz] = mock
 	}
 }
+
+fun <P> MockMap<P>.asMutable(): MutableMockMap<P> = when (this) {
+	is MutableMockMap -> this
+	MockMap.EMPTY -> HashMockMap()
+	// shit design
+	else -> throw IllegalArgumentException("Cannot make this mock map mutable: $this")
+}
