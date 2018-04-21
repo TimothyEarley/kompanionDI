@@ -14,5 +14,7 @@ class Injector<P>(
 
 	// could be replaced with HKT when available
 	inline fun <reified T> bean(proof: Dependency<T, P>): T =
-		mocks.get(T::class.java, profile) ?: proof.create(profile, mocks)
+		mocks.get(T::class.java, profile)
+				?: mocks.get(proof.javaClass, profile)?.create(profile, mocks)
+				?: proof.create(profile, mocks)
 }
