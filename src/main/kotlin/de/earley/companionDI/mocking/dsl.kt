@@ -35,8 +35,8 @@ infix fun <T : Any, P> Class<T>.beanBy(provider: Provider<T, P>): Mocking<T, P> 
 infix fun <T : Any, P> Class<T>.beanBy(dependency: Dependency<T, P>): Mocking<T, P> =
 		Mocking.ProviderMock(this, { p, injector -> dependency.create(p, injector.mocks, false) })
 
-internal fun <P> mocksOf(vararg mocks: Mocking<*, P>): MockMap<P> = mutableMocksOf(*mocks)
+fun <P> mocksOf(vararg mocks: Mocking<*, P>): MockMap<P> = mutableMocksOf(*mocks)
 
-private fun <P> mutableMocksOf(vararg mocks: Mocking<*, P>): MutableMockMap<P> = HashMockMap<P>().apply {
+fun <P> mutableMocksOf(vararg mocks: Mocking<*, P>): MutableMockMap<P> = HashMockMap<P>().apply {
 	mocks.forEach { add(it) }
 }

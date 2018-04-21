@@ -13,7 +13,7 @@ interface MockMap<in P> {
 	}
 }
 
-internal interface MutableMockMap<P> : MockMap<P> {
+interface MutableMockMap<P> : MockMap<P> {
 	fun <T: Any> add(mock: Mocking<T, P>)
 }
 
