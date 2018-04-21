@@ -59,7 +59,7 @@ internal class SingletonTest : StringSpec() {
 			(one === two) shouldBe false
 		}
 
-		"Even adding new mocks changes the instance since the mocks could change the desired strucuture" {
+		"Even adding new mocks changes the instance since the mocks could change the desired structure" {
 			FooSingleton.counter = 0
 			val one = FooSingleton.create(Profile.TEST4)
 			val two = FooSingleton.create(Profile.TEST4, String::class.java beanBy "Mock value")
