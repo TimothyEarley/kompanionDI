@@ -1,8 +1,10 @@
 package de.earley.companionDI.examples
 
-import de.earley.companionDI.*
 import de.earley.companionDI.mocking.HashMockMap
-import de.earley.companionDI.mocking.beanBy
+import de.earley.companionDI.mocking.mockedBy
+import de.earley.companionDI.Provider
+import de.earley.companionDI.bean
+import de.earley.companionDI.create
 
 enum class UserProfile {
 	Steve, Peter
@@ -63,28 +65,28 @@ object TestFormatter : Formatter {
 
 // these could all be static extension functions, if such a thing existed (and HKT)
 
-val formatterBean: Dependency<Formatter, UserProfile> = bean(RealFormatter)
+val formatterBean: Provider<Formatter, UserProfile> = bean(RealFormatter)
 
-val user: Dependency<User, UserProfile> = provide({ profile, _ -> when(profile) {
+val user: Provider<User, UserProfile> = { profile, _ -> when(profile) {
 	UserProfile.Steve -> User("Steve")
 	UserProfile.Peter -> User("Peter")
-}})
+}}
 
-val sendService: Dependency<SendService, UserProfile> = provide({ _, inject ->
-	EmailSendService(inject.bean(formatterBean))
-})
+val sendService: Provider<SendService, UserProfile> = { _, inject ->
+	EmailSendService(inject(formatterBean))
+}
 
-val app = provide<App, UserProfile> { _, inject ->
-	App(inject.bean(user), inject.bean(sendService))
+val app: Provider<App, UserProfile> = { _, inject ->
+	App(inject(user), inject(sendService))
 }
 
 // calling app.create(UserProfile.Steve) is the same as calling
 // App(User("Steve"), EmailSendService(RealFormatter))
 
 // test dep
-val printSendService: Dependency<PrintSendService, UserProfile> = provide({ _, inject ->
-	PrintSendService(inject.bean(formatterBean))
-})
+val printSendService: Provider<PrintSendService, UserProfile> = { _, inject ->
+	PrintSendService(inject(formatterBean))
+}
 
 fun main(args: Array<String>) {
 
@@ -93,22 +95,22 @@ fun main(args: Array<String>) {
 			app.create(UserProfile.Steve),
 			app.create(UserProfile.Peter),
 			// mock by other Dependency
-			app.create(UserProfile.Steve, SendService::class.java beanBy printSendService),
-			// mock any class by value
-			app.create(UserProfile.Steve, Formatter::class.java beanBy TestFormatter),
-			// mock by value
-			app.create(UserProfile.Steve, User::class.java beanBy User("This is not Steve!")),
+			app.create(UserProfile.Steve, sendService mockedBy printSendService),
+			// mock any class by bean
+			app.create(UserProfile.Steve, formatterBean mockedBy TestFormatter),
+			// mock by bean
+			app.create(UserProfile.Steve, user mockedBy User("This is not Steve!")),
 			// combine all of them
 			app.create(UserProfile.Steve,
-					SendService::class.java beanBy printSendService,
-					Formatter::class.java beanBy TestFormatter,
-					User::class.java beanBy User("This is not Steve!")
+					sendService mockedBy printSendService,
+					formatterBean mockedBy TestFormatter,
+					user mockedBy User("This is not Steve!")
 			)
 	).forEach(App::start)
 
 	// dynamic example
 	val mocks = HashMockMap<UserProfile>()
-	if (Math.random() > 0.5) mocks.add(User::class.java beanBy User("Random user!!!"))
+	if (Math.random() > 0.5) mocks.add(user mockedBy User("Random user!!!"))
 	app.create(UserProfile.Steve, mocks).start()
 
 }

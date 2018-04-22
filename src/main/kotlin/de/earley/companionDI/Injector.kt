@@ -11,29 +11,25 @@ interface Injector<P> {
 
 	val mocks: MockMap<P>
 
-	operator fun <T> invoke(dependency: Dependency<T, P>): T
-
-	fun <T> bean(clazz: Class<T>, proof: Dependency<T, P>): T
+	operator fun <T> invoke(provider: Provider<T, P>): T
 
 }
 
+interface MutableInjector<P> : Injector<P> {
 
-internal class MutableInjector<P>(
-		var profile: P,
+	var profile: P
+	override val mocks: MutableMockMap<P>
+
+}
+
+internal class InjectorImpl<P>(
+		override var profile: P,
 		override val mocks: MutableMockMap<P>
-) : Injector<P> {
+) : MutableInjector<P> {
 
-	constructor(profile: P, mocks: MockMap<P>): this(profile, mocks.asMutable())
-
-	override operator fun <T> invoke(dependency: Dependency<T, P>): T =
+	override operator fun <T> invoke(provider: Provider<T, P>): T =
 			// mock the dependency itself
-			mocks.get(dependency.javaClass, profile)?.create(profile, mocks)
-			?: dependency.create(profile, mocks)
-
-	//TODO needs manuel mocking - rethink design?
-	override fun <T> bean(clazz: Class<T>, proof: Dependency<T, P>): T = mockOrCreate(clazz, profile, mocks, proof)
+			mocks.get(provider.javaClass, profile)?.invoke(profile, this)
+			?: provider.invoke(profile, this)
 
 }
-
-// could be replaced with HKT when available
-inline fun <reified T, P> Injector<P>.bean(proof: Dependency<T, P>): T = bean(T::class.java, proof)

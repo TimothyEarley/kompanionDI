@@ -32,20 +32,20 @@ internal class GlobalInjectionTest : StringSpec() {
 
 	// DI
 
-	object FooDI : Dependency<Foo, Profile> by provide({ p, _ ->
+	object FooDI : Provider<Foo, Profile> by { p, _ ->
 		when (p) {
 			Profile.PROD -> Foo()
 			Profile.TEST -> throw IllegalArgumentException("Should be mocked")
 		}
-	})
+	}
 
-	object ServiceDI : Dependency<Service, Profile> by provide({ _, injector ->
+	object ServiceDI : Provider<Service, Profile> by { _, injector ->
 		ServiceImpl(injector(FooDI))
-	})
+	}
 
 
 	object App {
-		val inject = MutableInjector(Profile.PROD, mutableMocksOf())
+		val inject = createMutableInjector(Profile.PROD)
 	}
 
 
@@ -59,9 +59,9 @@ internal class GlobalInjectionTest : StringSpec() {
 
 			shouldThrow<IllegalArgumentException> { Unmanaged() }
 
-			inject.mocks.add(FooDI mockCreateBy bean(object : Foo() {
+			inject.mocks.add(FooDI mockedBy object : Foo() {
 				override fun bar() = "Mock"
-			}))
+			})
 
 			Unmanaged().service.foo() shouldBe "Impl: Mock"
 

@@ -1,9 +1,9 @@
 package de.earley.companionDI.examples
 
-import de.earley.companionDI.Dependency
-import de.earley.companionDI.create
 import de.earley.companionDI.mocking.mockedBy
-import de.earley.companionDI.provide
+import de.earley.companionDI.Provider
+import de.earley.companionDI.create
+
 
 enum class Profile {
 	Prod, Test
@@ -13,12 +13,12 @@ interface DB {
 
 	fun bar(): String
 
-	companion object : Dependency<DB, Profile> by provide({ profile, _ ->
+	companion object : Provider<DB, Profile> by { profile, _ ->
 		when (profile) {
 			Profile.Prod -> ProdDB()
 			Profile.Test -> TestDB()
 		}
-	})
+	}
 
 }
 
@@ -34,9 +34,9 @@ interface Service {
 
 	fun foo(): String
 
-	companion object : Dependency<Service, Profile> by provide({ _, inject ->
+	companion object : Provider<Service, Profile> by { _, inject ->
 		ServiceA(inject(DB))
-	})
+	}
 
 }
 
@@ -51,12 +51,12 @@ interface Printer {
 
 	fun print()
 
-	companion object : Dependency<Printer, Profile> by provide({ _, inject ->
+	companion object : Provider<Printer, Profile> by { _, inject ->
 		PrinterImpl(
 				inject(DB),
 				inject(Service)
 		)
-	})
+	}
 
 }
 

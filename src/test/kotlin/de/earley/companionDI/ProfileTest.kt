@@ -12,12 +12,12 @@ internal class ProfilesTest : StringSpec() {
 	private interface Foo {
 		fun bar(): String
 
-		companion object : Dependency<Foo, ExampleProfile> by provide({ profile, _ ->
+		companion object : Provider<Foo, ExampleProfile> by { profile, _ ->
 			when (profile) {
 				ProfilesTest.ExampleProfile.PROD -> FooProd()
 				ProfilesTest.ExampleProfile.TEST -> FooTest()
 			}
-		})
+		}
 	}
 
 	private class FooProd : Foo {
@@ -32,9 +32,9 @@ internal class ProfilesTest : StringSpec() {
 	private class FooWithDependency(private val dependency: Foo) : Foo {
 		override fun bar() = "Dependency: ${dependency.bar()}"
 
-		companion object : Dependency<FooWithDependency, ExampleProfile> by provide({ _, inject ->
+		companion object : Provider<FooWithDependency, ExampleProfile> by { _, inject ->
 			FooWithDependency(inject(Foo))
-		})
+		}
 	}
 
 	init {

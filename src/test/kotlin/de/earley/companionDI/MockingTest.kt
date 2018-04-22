@@ -9,7 +9,7 @@ internal class MockingTest : StringSpec() {
 	private interface Foo {
 		fun bar(): String
 
-		companion object : Dependency<Foo, Nothing?> by provide({ _, _ -> FooImpl() })
+		companion object : Provider<Foo, Nothing?> by { _, _ -> FooImpl() }
 	}
 
 
@@ -20,7 +20,7 @@ internal class MockingTest : StringSpec() {
 	private class OtherFooImpl : Foo {
 		override fun bar() = "Other Impl"
 
-		companion object : Dependency<Foo, Nothing?> by provide({ _, _ -> OtherFooImpl() })
+		companion object : Provider<Foo, Nothing?> by { _, _ -> OtherFooImpl() }
 	}
 
 	private class FooWithDependency(
@@ -29,9 +29,9 @@ internal class MockingTest : StringSpec() {
 
 		override fun bar() = "Dependency: ${dependency.bar()}"
 
-		companion object : Dependency<FooWithDependency, Nothing?> by provide({ _, inject ->
+		companion object : Provider<FooWithDependency, Nothing?> by { _, inject ->
 			FooWithDependency(inject(Foo))
-		})
+		}
 	}
 
 	private class FooTwoDependencies(
@@ -40,9 +40,9 @@ internal class MockingTest : StringSpec() {
 	) : Foo {
 		override fun bar() = "One: ${one.bar()}, Two: ${two.bar()}"
 
-		companion object : Dependency<FooTwoDependencies, Nothing?> by provide({ _, inject ->
+		companion object : Provider<FooTwoDependencies, Nothing?> by { _, inject ->
 			FooTwoDependencies(inject(Foo), inject(Foo))
-		})
+		}
 	}
 
 	init {
@@ -75,7 +75,9 @@ internal class MockingTest : StringSpec() {
 					Foo mockedBy { _, _ ->
 						count++
 						val now = count
-						object : Foo { override fun bar() = "$now" }
+						object : Foo {
+							override fun bar() = "$now"
+						}
 					}
 			).bar() shouldBe "One: 1, Two: 2"
 		}

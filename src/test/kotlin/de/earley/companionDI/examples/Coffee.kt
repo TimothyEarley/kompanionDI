@@ -1,18 +1,17 @@
 package de.earley.companionDI.examples
 
-import de.earley.companionDI.Dependency
-import de.earley.companionDI.Provider
-import de.earley.companionDI.create
 import de.earley.companionDI.mocking.mockedBy
 import de.earley.companionDI.mocking.mocksOf
-import de.earley.companionDI.provide
+import de.earley.companionDI.Provider
+import de.earley.companionDI.create
+
 
 interface Heater {
 	fun heat()
 
-	companion object : Dependency<Heater, Unit> by provide({ _, _ ->
+	companion object : Provider<Heater, Unit> by { _, _ ->
 		ElectricHeater()
-	})
+	}
 }
 
 class ElectricHeater : Heater {
@@ -24,9 +23,9 @@ class ElectricHeater : Heater {
 interface Pump {
 	fun pump()
 
-	companion object : Dependency<Pump, Unit> by provide({ _, inject ->
+	companion object : Provider<Pump, Unit> by { _, inject ->
 		Thermosiphon(inject(Heater))
-	})
+	}
 }
 
 class Thermosiphon(
@@ -49,12 +48,12 @@ open class CoffeeMaker(
 		println("Coffee!")
 	}
 
-	companion object : Dependency<CoffeeMaker, Unit> by provide({ _, inject ->
+	companion object : Provider<CoffeeMaker, Unit> by { _, inject ->
 		CoffeeMaker(
 				inject(Heater),
 				inject(Pump)
 		)
-	})
+	}
 
 }
 
@@ -63,9 +62,9 @@ class CoffeeShop(
 		val maker: CoffeeMaker
 ) {
 
-	companion object : Dependency<CoffeeShop, Unit> by provide({ _, inject ->
+	companion object : Provider<CoffeeShop, Unit> by { _, inject ->
 		CoffeeShop(inject(CoffeeMaker))
-	})
+	}
 
 }
 
