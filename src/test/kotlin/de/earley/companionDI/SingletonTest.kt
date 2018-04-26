@@ -39,7 +39,7 @@ internal class SingletonTest : StringSpec() {
 
 		val inject = createMutableInjector(Profile.TEST1)
 
-		"If you choose the provide dependency mutliple instances will be created" {
+		"If you choose the provide dependency multiple instances will be created" {
 			inject.profile = Profile.TEST1
 			FooProvide.counter = 0
 			val one = inject(FooProvide)

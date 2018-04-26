@@ -1,10 +1,10 @@
 package de.earley.companionDI.examples
 
-import de.earley.companionDI.mocking.HashMockMap
-import de.earley.companionDI.mocking.mockedBy
 import de.earley.companionDI.Provider
 import de.earley.companionDI.bean
 import de.earley.companionDI.create
+import de.earley.companionDI.mocking.mockedBy
+import de.earley.companionDI.mocking.mutableMocksOf
 
 enum class UserProfile {
 	Steve, Peter
@@ -109,7 +109,7 @@ fun main(args: Array<String>) {
 	).forEach(App::start)
 
 	// dynamic example
-	val mocks = HashMockMap<UserProfile>()
+	val mocks = mutableMocksOf<UserProfile>()
 	if (Math.random() > 0.5) mocks.add(user mockedBy User("Random user!!!"))
 	app.create(UserProfile.Steve, mocks).start()
 

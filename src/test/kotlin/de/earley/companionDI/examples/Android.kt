@@ -1,7 +1,6 @@
 package de.earley.companionDI.examples
 
 import de.earley.companionDI.Provider
-import de.earley.companionDI.createInjector
 import de.earley.companionDI.createMutableInjector
 import de.earley.companionDI.mocking.mockedBy
 import de.earley.companionDI.singleton

@@ -2,11 +2,11 @@ package de.earley.companionDI
 
 import de.earley.companionDI.mocking.*
 
-fun <P> createInjector(profile: P, mocks: MockMap<P> = MockMap.empty()): Injector<P> = InjectorImpl(profile, mocks.asMutable())
 fun <P> createInjector(profile: P, vararg mocks: MockProvider<*, P>): Injector<P> = createInjector(profile, mocksOf(*mocks))
+fun <P> createInjector(profile: P, mocks: MockMap<P> = MockMap.empty()): Injector<P> = InjectorImpl(profile, mocks)
 
-fun <P> createMutableInjector(profile: P, mocks: MutableMockMap<P> = HashMockMap()): MutableInjector<P> = InjectorImpl(profile, mocks)
-fun <P> createMutableInjector(profile: P, vararg mocks: MockProvider<*, P>): MutableInjector<P> = InjectorImpl(profile, mutableMocksOf(*mocks))
+fun <P> createMutableInjector(profile: P, vararg mocks: MockProvider<*, P>): MutableInjector<P> = createMutableInjector(profile, mutableMocksOf(*mocks))
+fun <P> createMutableInjector(profile: P, mocks: MutableMockMap<P> = HashMockMap()): MutableInjector<P> = MutableInjectorImpl(profile, mocks)
 
 
 /*

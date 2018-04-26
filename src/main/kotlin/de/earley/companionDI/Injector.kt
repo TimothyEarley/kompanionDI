@@ -2,34 +2,34 @@ package de.earley.companionDI
 
 import de.earley.companionDI.mocking.MockMap
 import de.earley.companionDI.mocking.MutableMockMap
-import de.earley.companionDI.mocking.asMutable
 
 /**
  * Utility interface for creating dependency with a given profile and mocks
  */
-interface Injector<P> {
+sealed class Injector<P> {
+	abstract val profile: P
+	abstract val mocks: MockMap<P>
 
-	val mocks: MockMap<P>
-
-	operator fun <T> invoke(provider: Provider<T, P>): T
-
+	/**
+	 * The injection function. Creates an instance of T.
+	 * Uses the mocks and profile it has set.
+	 */
+	operator fun <T> invoke(provider: Provider<T, P>): T =
+			mocks.get(provider.javaClass, profile)?.invoke(profile, this)
+					?: provider.invoke(profile, this)
 }
 
-interface MutableInjector<P> : Injector<P> {
-
-	var profile: P
-	override val mocks: MutableMockMap<P>
-
+abstract class MutableInjector<P> : Injector<P>() {
+	abstract override var profile: P
+	abstract override val mocks: MutableMockMap<P>
 }
 
 internal class InjectorImpl<P>(
+		override val profile: P,
+		override val mocks: MockMap<P>
+) : Injector<P>()
+
+internal class MutableInjectorImpl<P>(
 		override var profile: P,
 		override val mocks: MutableMockMap<P>
-) : MutableInjector<P> {
-
-	override operator fun <T> invoke(provider: Provider<T, P>): T =
-			// mock the dependency itself
-			mocks.get(provider.javaClass, profile)?.invoke(profile, this)
-			?: provider.invoke(profile, this)
-
-}
+) : MutableInjector<P>()

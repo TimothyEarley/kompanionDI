@@ -16,7 +16,7 @@ interface MockMap<P> {
 	companion object {
 		fun <P> empty(): MockMap<P> = EMPTY as MockMap<P>
 
-		val EMPTY = object : MockMap<Any?> {
+		private val EMPTY = object : MockMap<Any?> {
 			override fun <T, D : Provider<T, Any?>> get(clazz: Class<D>, profile: Any?): D? = null
 		}
 	}
@@ -43,11 +43,4 @@ internal class HashMockMap<P> : MutableMockMap<P> {
 		// hash each entry
 		return Objects.hash(*map.entries.toTypedArray())
 	}
-}
-
-fun <P> MockMap<P>.asMutable(): MutableMockMap<P> = when (this) {
-	is MutableMockMap -> this
-	MockMap.EMPTY -> HashMockMap()
-	// shit design
-	else -> throw IllegalArgumentException("Cannot make this mock map mutable: $this")
 }

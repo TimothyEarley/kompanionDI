@@ -21,7 +21,7 @@ internal class GlobalInjectionTest : StringSpec() {
 	}
 
 	class ServiceImpl(
-			val foo: Foo
+			private val foo: Foo
 	) : Service {
 		override fun foo() = "Impl: " + foo.bar()
 	}
