@@ -1,5 +1,5 @@
 .gradle
-/build/
+build/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -14,5 +14,5 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 
-/out/
+out/
 .idea

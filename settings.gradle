@@ -1,2 +1,4 @@
 rootProject.name = 'DIWithCompanions'
+include 'core'
+include 'examples'
 
