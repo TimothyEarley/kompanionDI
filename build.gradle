@@ -1,7 +1,14 @@
 allprojects {
 
-	group 'de.earley'
 	version '0.1.0'
+
+}
+
+subprojects {
+
+	apply plugin: 'maven'
+
+	group 'de.earley.kompanionDI'
 
 	repositories {
 		mavenCentral()

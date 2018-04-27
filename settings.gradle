@@ -1,4 +1,4 @@
-rootProject.name = 'DIWithCompanions'
+rootProject.name = 'kompanionDI'
 include 'core'
 include 'examples'
 
