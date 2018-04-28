@@ -7,6 +7,9 @@ interface MockMap<P> {
 
 	fun <T, D : Provider<T, P>> get(provider: D, profile: P): D?
 
+	//TODO could add this method when needed
+	// fun getAllMocks(): Collection<Map.Entry<Provider<*, P>, Provider<*, P>>>
+
 	/**
 	 * Int representation of the current state
 	 */
