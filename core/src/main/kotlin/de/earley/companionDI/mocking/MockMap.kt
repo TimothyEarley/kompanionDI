@@ -5,7 +5,7 @@ import java.util.*
 
 interface MockMap<P> {
 
-	fun <T, D : Provider<T, P>> get(clazz: Class<D>, profile: P): D?
+	fun <T, D : Provider<T, P>> get(provider: D, profile: P): D?
 
 	/**
 	 * Int representation of the current state
@@ -17,7 +17,7 @@ interface MockMap<P> {
 		fun <P> empty(): MockMap<P> = EMPTY as MockMap<P>
 
 		private val EMPTY = object : MockMap<Any?> {
-			override fun <T, D : Provider<T, Any?>> get(clazz: Class<D>, profile: Any?): D? = null
+			override fun <T, D : Provider<T, Any?>> get(provider: D, profile: Any?): D? = null
 		}
 	}
 }
@@ -28,15 +28,16 @@ interface MutableMockMap<P> : MockMap<P> {
 
 internal class HashMockMap<P> : MutableMockMap<P> {
 
-	private val map: MutableMap<Class<*>, Provider<*, P>> = HashMap()
+	// the correspondence between the *'s is checked by the setter (and MockProvider)
+	private val map: MutableMap<Provider<*, P>, Provider<*, P>> = HashMap()
 
 	@Suppress("UNCHECKED_CAST")
-	override fun <T, D : Provider<T, P>> get(clazz: Class<D>, profile: P): D? {
-		return map[clazz] as D?
+	override fun <T, D : Provider<T, P>> get(provider: D, profile: P): D? {
+		return map[provider] as D?
 	}
 
 	override fun <T> add(mock: MockProvider<T, P>) {
-		map[mock.clazz] = mock
+		map[mock.mockedProvider] = mock
 	}
 
 	override fun hashState(): Int {

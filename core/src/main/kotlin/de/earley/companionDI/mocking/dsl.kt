@@ -4,7 +4,7 @@ import de.earley.companionDI.Provider
 import de.earley.companionDI.bean
 
 infix fun <T, T2 : T, P> Provider<T, P>.mockedBy(mock: Provider<T2, P>): MockProvider<T, P> =
-		MockProvider(this.javaClass, mock)
+		MockProvider(this, mock)
 
 infix fun <T, T2 : T, P> Provider<T, P>.mockedBy(mock: T2): MockProvider<T, P> =
 		this mockedBy bean(mock)

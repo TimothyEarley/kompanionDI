@@ -15,7 +15,7 @@ sealed class Injector<P> {
 	 * Uses the mocks and profile it has set.
 	 */
 	operator fun <T> invoke(provider: Provider<T, P>): T =
-			mocks.get(provider.javaClass, profile)?.invoke(profile, this)
+			mocks.get(provider, profile)?.invoke(profile, this)
 					?: provider.invoke(profile, this)
 }
 

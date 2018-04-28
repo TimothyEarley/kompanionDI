@@ -11,6 +11,7 @@ fun <P> createMutableInjector(profile: P, mocks: MutableMockMap<P> = HashMockMap
 
 /*
  * To create a dependency from scratch in a new context
+ * These should not be used in production
  */
 
 fun <T> Provider<T, Unit>.create(mocks: MockMap<Unit> = MockMap.empty()): T =
