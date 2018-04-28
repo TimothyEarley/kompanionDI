@@ -1,9 +1,9 @@
-package de.earley.companionDI.examples
+package de.earley.kompanionDI.examples
 
-import de.earley.companionDI.mocking.mockedBy
-import de.earley.companionDI.mocking.mocksOf
-import de.earley.companionDI.Provider
-import de.earley.companionDI.create
+import de.earley.kompanionDI.mocking.mockedBy
+import de.earley.kompanionDI.mocking.mocksOf
+import de.earley.kompanionDI.Provider
+import de.earley.kompanionDI.create
 
 
 interface Heater {

@@ -1,9 +1,9 @@
-package de.earley.companionDI.examples
+package de.earley.kompanionDI.examples
 
-import de.earley.companionDI.Provider
-import de.earley.companionDI.createMutableInjector
-import de.earley.companionDI.mocking.mockedBy
-import de.earley.companionDI.singleton
+import de.earley.kompanionDI.Provider
+import de.earley.kompanionDI.createMutableInjector
+import de.earley.kompanionDI.mocking.mockedBy
+import de.earley.kompanionDI.singleton
 
 object Android {
 

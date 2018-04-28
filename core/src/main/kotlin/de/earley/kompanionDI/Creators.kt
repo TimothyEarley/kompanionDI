@@ -1,6 +1,6 @@
-package de.earley.companionDI
+package de.earley.kompanionDI
 
-import de.earley.companionDI.mocking.*
+import de.earley.kompanionDI.mocking.*
 
 fun <P> createInjector(profile: P, vararg mocks: MockProvider<*, P>): Injector<P> = createInjector(profile, mocksOf(*mocks))
 fun <P> createInjector(profile: P, mocks: MockMap<P> = MockMap.empty()): Injector<P> = InjectorImpl(profile, mocks)

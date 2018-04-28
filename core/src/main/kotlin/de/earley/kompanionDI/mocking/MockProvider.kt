@@ -1,6 +1,6 @@
-package de.earley.companionDI.mocking
+package de.earley.kompanionDI.mocking
 
-import de.earley.companionDI.Provider
+import de.earley.kompanionDI.Provider
 
 class MockProvider<out T, P>(
 		val mockedProvider: Provider<T, P>,

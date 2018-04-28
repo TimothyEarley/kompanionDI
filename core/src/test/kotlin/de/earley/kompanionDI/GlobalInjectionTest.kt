@@ -1,7 +1,7 @@
-package de.earley.companionDI
+package de.earley.kompanionDI
 
-import de.earley.companionDI.GlobalInjectionTest.App.inject
-import de.earley.companionDI.mocking.*
+import de.earley.kompanionDI.GlobalInjectionTest.App.inject
+import de.earley.kompanionDI.mocking.*
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldThrow
 import io.kotlintest.specs.StringSpec

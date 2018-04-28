@@ -1,4 +1,4 @@
-package de.earley.companionDI
+package de.earley.kompanionDI
 
 typealias Provider<T, P> = (P, Injector<P>) -> T
 

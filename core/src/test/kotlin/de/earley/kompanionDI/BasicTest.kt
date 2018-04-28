@@ -1,4 +1,4 @@
-package de.earley.companionDI
+package de.earley.kompanionDI
 
 import io.kotlintest.matchers.beOfType
 import io.kotlintest.should

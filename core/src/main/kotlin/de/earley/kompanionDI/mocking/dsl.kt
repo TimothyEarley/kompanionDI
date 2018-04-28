@@ -1,7 +1,7 @@
-package de.earley.companionDI.mocking
+package de.earley.kompanionDI.mocking
 
-import de.earley.companionDI.Provider
-import de.earley.companionDI.bean
+import de.earley.kompanionDI.Provider
+import de.earley.kompanionDI.bean
 
 infix fun <T, T2 : T, P> Provider<T, P>.mockedBy(mock: Provider<T2, P>): MockProvider<T, P> =
 		MockProvider(this, mock)

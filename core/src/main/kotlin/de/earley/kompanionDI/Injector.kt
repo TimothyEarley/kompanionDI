@@ -1,7 +1,7 @@
-package de.earley.companionDI
+package de.earley.kompanionDI
 
-import de.earley.companionDI.mocking.MockMap
-import de.earley.companionDI.mocking.MutableMockMap
+import de.earley.kompanionDI.mocking.MockMap
+import de.earley.kompanionDI.mocking.MutableMockMap
 
 /**
  * Utility interface for creating dependency with a given profile and mocks

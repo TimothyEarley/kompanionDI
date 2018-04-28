@@ -1,7 +1,7 @@
-package de.earley.companionDI
+package de.earley.kompanionDI
 
-import de.earley.companionDI.mocking.mockedBy
-import de.earley.companionDI.mocking.mocksOf
+import de.earley.kompanionDI.mocking.mockedBy
+import de.earley.kompanionDI.mocking.mocksOf
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 

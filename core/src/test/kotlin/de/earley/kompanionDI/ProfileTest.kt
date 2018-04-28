@@ -1,4 +1,4 @@
-package de.earley.companionDI
+package de.earley.kompanionDI
 
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec

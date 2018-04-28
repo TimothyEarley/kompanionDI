@@ -1,10 +1,10 @@
-package de.earley.companionDI.examples
+package de.earley.kompanionDI.examples
 
-import de.earley.companionDI.Provider
-import de.earley.companionDI.bean
-import de.earley.companionDI.create
-import de.earley.companionDI.mocking.mockedBy
-import de.earley.companionDI.mocking.mutableMocksOf
+import de.earley.kompanionDI.Provider
+import de.earley.kompanionDI.bean
+import de.earley.kompanionDI.create
+import de.earley.kompanionDI.mocking.mockedBy
+import de.earley.kompanionDI.mocking.mutableMocksOf
 
 enum class UserProfile {
 	Steve, Peter
