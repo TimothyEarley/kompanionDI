@@ -1,7 +1,11 @@
+@file:Suppress("unused")
+
 package de.earley.kompanionDI
 
 import de.earley.kompanionDI.mocking.*
 
+fun createInjector(): Injector<Unit> = createInjector(Unit)
+fun createInjector(mocks: MockMap<Unit>): Injector<Unit> = createInjector(Unit, mocks)
 fun <P> createInjector(profile: P, vararg mocks: MockProvider<*, P>): Injector<P> = createInjector(profile, mocksOf(*mocks))
 fun <P> createInjector(profile: P, mocks: MockMap<P> = MockMap.empty()): Injector<P> = InjectorImpl(profile, mocks)
 
@@ -9,16 +13,19 @@ fun <P> createMutableInjector(profile: P, vararg mocks: MockProvider<*, P>): Mut
 fun <P> createMutableInjector(profile: P, mocks: MutableMockMap<P> = HashMockMap()): MutableInjector<P> = MutableInjectorImpl(profile, mocks)
 
 
+fun <DI> createContext(di: DI, mocks: MockMap<Unit> = MockMap.empty()): Context<DI, Unit> = createContext(di, Unit, mocks)
+fun <DI, P> createContext(di: DI, profile: P, mocks: MockMap<P> = MockMap.empty()): Context<DI, P> = ContextBackedByInjector(di, createInjector(profile, mocks))
+
 /*
  * To create a dependency from scratch in a new context
  * These should not be used in production
  */
 
-fun <T> Provider<T, Unit>.create(mocks: MockMap<Unit> = MockMap.empty()): T =
+internal fun <T> Provider<T, Unit>.create(mocks: MockMap<Unit> = MockMap.empty()): T =
 		this.create(Unit, mocks)
 
-fun <T, P> Provider<T, P>.create(profile: P, vararg mocks: MockProvider<*, P>): T =
+internal fun <T, P> Provider<T, P>.create(profile: P, vararg mocks: MockProvider<*, P>): T =
 		createInjector(profile, *mocks).invoke(this)
 
-fun <T, P> Provider<T, P>.create(profile: P, mocks: MockMap<P> = MockMap.empty()): T =
+internal fun <T, P> Provider<T, P>.create(profile: P, mocks: MockMap<P> = MockMap.empty()): T =
 		createInjector(profile, mocks).invoke(this)

@@ -1,9 +1,7 @@
 package de.earley.kompanionDI.examples
 
-import de.earley.kompanionDI.Provider
-import de.earley.kompanionDI.bean
-import de.earley.kompanionDI.create
-import de.earley.kompanionDI.mocking.mockedBy
+import de.earley.kompanionDI.*
+import de.earley.kompanionDI.mocking.mock
 import de.earley.kompanionDI.mocking.mutableMocksOf
 
 enum class UserProfile {
@@ -92,25 +90,25 @@ fun main(args: Array<String>) {
 
 	listOf(
 			// profiles
-			app.create(UserProfile.Steve),
-			app.create(UserProfile.Peter),
-			// mock by other Dependency
-			app.create(UserProfile.Steve, sendService mockedBy printSendService),
-			// mock any class by bean
-			app.create(UserProfile.Steve, formatterBean mockedBy TestFormatter),
-			// mock by bean
-			app.create(UserProfile.Steve, user mockedBy User("This is not Steve!")),
+			createInjector(UserProfile.Steve),
+			createInjector(UserProfile.Peter),
+			// Mock by other Dependency
+			createInjector(UserProfile.Steve, sendService.mock with printSendService),
+			// Mock any class by bean
+			createInjector(UserProfile.Steve, formatterBean.mock withBean TestFormatter),
+			// Mock by bean
+			createInjector(UserProfile.Steve, user.mock withBean User("This is not Steve!")),
 			// combine all of them
-			app.create(UserProfile.Steve,
-					sendService mockedBy printSendService,
-					formatterBean mockedBy TestFormatter,
-					user mockedBy User("This is not Steve!")
+			createInjector(UserProfile.Steve,
+					sendService.mock with printSendService,
+					formatterBean.mock withBean TestFormatter,
+					user.mock withBean User("This is not Steve!")
 			)
-	).forEach(App::start)
+	).map { it.invoke(app) }.forEach(App::start)
 
 	// dynamic example
 	val mocks = mutableMocksOf<UserProfile>()
-	if (Math.random() > 0.5) mocks.add(user mockedBy User("Random user!!!"))
-	app.create(UserProfile.Steve, mocks).start()
+	if (Math.random() > 0.5) mocks.add(user.mock withBean User("Random user!!!"))
+	createInjector(UserProfile.Steve, mocks)(app).start()
 
 }

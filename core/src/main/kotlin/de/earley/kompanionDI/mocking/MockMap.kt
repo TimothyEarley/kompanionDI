@@ -5,7 +5,7 @@ import java.util.*
 
 interface MockMap<P> {
 
-	fun <T, D : Provider<T, P>> get(provider: D, profile: P): D?
+	fun <T, D : Provider<T, P>> get(provider: D): D?
 
 	//TODO could add this method when needed
 	// fun getAllMocks(): Collection<Map.Entry<Provider<*, P>, Provider<*, P>>>
@@ -20,7 +20,7 @@ interface MockMap<P> {
 		fun <P> empty(): MockMap<P> = EMPTY as MockMap<P>
 
 		private val EMPTY = object : MockMap<Any?> {
-			override fun <T, D : Provider<T, Any?>> get(provider: D, profile: Any?): D? = null
+			override fun <T, D : Provider<T, Any?>> get(provider: D): D? = null
 		}
 	}
 }
@@ -35,7 +35,7 @@ internal class HashMockMap<P> : MutableMockMap<P> {
 	private val map: MutableMap<Provider<*, P>, Provider<*, P>> = HashMap()
 
 	@Suppress("UNCHECKED_CAST")
-	override fun <T, D : Provider<T, P>> get(provider: D, profile: P): D? {
+	override fun <T, D : Provider<T, P>> get(provider: D): D? {
 		return map[provider] as D?
 	}
 

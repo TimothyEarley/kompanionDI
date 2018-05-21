@@ -2,7 +2,8 @@ package de.earley.kompanionDI.examples
 
 import de.earley.kompanionDI.Provider
 import de.earley.kompanionDI.createMutableInjector
-import de.earley.kompanionDI.mocking.mockedBy
+import de.earley.kompanionDI.invoke
+import de.earley.kompanionDI.mocking.mock
 import de.earley.kompanionDI.singleton
 
 object Android {
@@ -87,9 +88,9 @@ fun main(args: Array<String>) {
 	Android.App.inject.profile = Android.Profile.TEST
 	run()
 
-	// mock
+	// Mock
 	Android.App.inject.mocks.add(
-			Android.DI.interactor mockedBy object : Android.Interactor {
+			Android.DI.interactor.mock withBean object : Android.Interactor {
 				override fun getData(): String = "MOCK"
 			}
 	)

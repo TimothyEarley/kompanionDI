@@ -1,7 +1,7 @@
 package de.earley.kompanionDI
 
 
-import de.earley.kompanionDI.mocking.mockedBy
+import de.earley.kompanionDI.mocking.mock
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
@@ -71,7 +71,7 @@ internal class SingletonTest : StringSpec() {
 			inject.profile = Profile.TEST4
 			FooSingleton.counter = 0
 			val one = inject(FooSingleton)
-			inject.mocks.add(dummy mockedBy dummy)
+			inject.mocks.add(dummy.mock.with(dummy))
 			val two = inject(FooSingleton)
 			FooSingleton.counter shouldBe 2
 			(one === two) shouldBe false

@@ -1,5 +1,6 @@
 package de.earley.kompanionDI
 
+// T has out variance
 typealias Provider<T, P> = (P, Injector<P>) -> T
 
 // extra providers
@@ -18,4 +19,8 @@ fun <T, P> singleton(provider: Provider<T, P>): Provider<T, P> {
 	}
 }
 
+fun <T, P> lazyBean(value: () -> T): Provider<T, P> {
+	val v by lazy { value() }
+	return { _, _ -> v }
+}
 fun <T, P> bean(value: T): Provider<T, P> = { _, _ -> value }

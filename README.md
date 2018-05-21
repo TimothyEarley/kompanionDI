@@ -1,5 +1,5 @@
 # CompanionDI
-Proof of concept for a DI Framework based on Kotlins companion objects
+Proof of concept for a DI Framework based on Katlin's companion objects
 
 See the examples for usage (there are no good descriptions yet)
 

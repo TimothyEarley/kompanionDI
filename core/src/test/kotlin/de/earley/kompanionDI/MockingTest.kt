@@ -1,6 +1,6 @@
 package de.earley.kompanionDI
 
-import de.earley.kompanionDI.mocking.mockedBy
+import de.earley.kompanionDI.mocking.mock
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
@@ -55,24 +55,24 @@ internal class MockingTest : StringSpec() {
 		"This makes the dependency mockable" {
 			FooWithDependency.create(
 					null,
-					Foo mockedBy OtherFooImpl
+					Foo.mock with OtherFooImpl
 			).bar() shouldBe "Dependency: Other Impl"
 		}
 
 		"Or use an object" {
 			FooWithDependency.create(
 					null,
-					Foo mockedBy object : Foo {
+					Foo.mock withBean object : Foo {
 						override fun bar() = "Mock"
 					}
 			).bar() shouldBe "Dependency: Mock"
 		}
 
-		"You can also create a new instance per mock" {
+		"You can also create a new instance per Mock" {
 			var count = 0
 			FooTwoDependencies.create(
 					null,
-					Foo mockedBy { _, _ ->
+					Foo.mock with { _, _ ->
 						count++
 						val now = count
 						object : Foo {

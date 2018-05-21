@@ -1,9 +1,10 @@
 package de.earley.kompanionDI.examples
 
-import de.earley.kompanionDI.mocking.mockedBy
-import de.earley.kompanionDI.mocking.mocksOf
 import de.earley.kompanionDI.Provider
-import de.earley.kompanionDI.create
+import de.earley.kompanionDI.createInjector
+import de.earley.kompanionDI.invoke
+import de.earley.kompanionDI.mocking.mock
+import de.earley.kompanionDI.mocking.mocksOf
 
 
 interface Heater {
@@ -69,19 +70,18 @@ class CoffeeShop(
 }
 
 fun main(args: Array<String>) {
-	CoffeeShop.create().maker.brew()
-
+	createInjector()(CoffeeShop).maker.brew()
 
 	println("\n\nMocking....")
 
-	// mock the heater
+	// Mock the heater
 	val mockedHeater = object : Heater {
 		override fun heat() {
 			println("Mocked heater")
 		}
 	}
 
-	// mock the maker
+	// Mock the maker
 	val mockedMaker: Provider<CoffeeMaker, Unit> = { _, inject ->
 		object : CoffeeMaker(inject(Heater), inject(Pump)) {
 			override fun brew() {
@@ -93,8 +93,8 @@ fun main(args: Array<String>) {
 
 
 	val mocks = mocksOf(
-			Heater mockedBy mockedHeater,
-			CoffeeMaker mockedBy mockedMaker
+			Heater.mock withBean mockedHeater,
+			CoffeeMaker.mock with mockedMaker
 	)
-	CoffeeShop.create(mocks).maker.brew()
+	createInjector(mocks)(CoffeeShop).maker.brew()
 }

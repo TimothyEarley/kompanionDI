@@ -3,11 +3,18 @@ package de.earley.kompanionDI.mocking
 import de.earley.kompanionDI.Provider
 import de.earley.kompanionDI.bean
 
-infix fun <T, T2 : T, P> Provider<T, P>.mockedBy(mock: Provider<T2, P>): MockProvider<T, P> =
-		MockProvider(this, mock)
+interface Mockable<T, P> {
+	infix fun with(mock: Provider<T, P>): MockProvider<T, P>
+	infix fun withBean(mock: T): MockProvider<T, P>
+}
 
-infix fun <T, T2 : T, P> Provider<T, P>.mockedBy(mock: T2): MockProvider<T, P> =
-		this mockedBy bean(mock)
+private class Mock<T, P>(private val provider: Provider<T, P>) : Mockable<T, P> {
+	override infix fun with(mock: Provider<T, P>): MockProvider<T, P> = MockProvider(provider, mock)
+	override infix fun withBean(mock: T): MockProvider<T, P> = this with bean(mock)
+}
+
+val <T, P> Provider<T, P>.mock
+	get(): Mockable<T, P> = Mock(this)
 
 fun <P> mocksOf(vararg mocks: MockProvider<*, P>): MockMap<P> = mutableMocksOf(*mocks)
 
