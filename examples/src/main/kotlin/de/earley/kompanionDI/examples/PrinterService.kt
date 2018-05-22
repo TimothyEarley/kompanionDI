@@ -4,7 +4,6 @@ import de.earley.kompanionDI.Provider
 import de.earley.kompanionDI.createInjector
 import de.earley.kompanionDI.invoke
 import de.earley.kompanionDI.mocking.mock
-import de.earley.kompanionDI.mocking.Mock
 
 object PrinterService {
 
