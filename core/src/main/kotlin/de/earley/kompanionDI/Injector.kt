@@ -4,25 +4,32 @@ import de.earley.kompanionDI.mocking.MockMap
 import de.earley.kompanionDI.mocking.MutableMockMap
 
 /**
- * Utility interface for creating dependency with a given profile and mocks
+ * Utility interface for creating dependency with a given profile and mocks.
+ * Used as an arguments to [Provider]
  */
 interface Injector<P> {
 	val profile: P
 	val mocks: MockMap<P>
+
+	/**
+	 * The injection function. Creates an instance of T.
+	 * Uses the mocks and profile it has set.
+	 */
+	operator fun <T> invoke(provider: Provider<T, P>): T =
+			mocks.get(provider)?.invoke(profile, this)
+					?: provider.invoke(profile, this)
 }
 
 /**
- * The injection function. Creates an instance of T.
- * Uses the mocks and profile it has set.
+ * An [Injector] which can can be mutated.
+ * This can lead to strange behaviour when used directly, i.e. two calls to a provider might differ.
  */
-operator fun <T, P> Injector<P>.invoke(provider: Provider<T, P>): T =
-		mocks.get(provider)?.invoke(profile, this)
-				?: provider.invoke(profile, this)
-
 abstract class MutableInjector<P> : Injector<P> {
 	abstract override var profile: P
 	abstract override val mocks: MutableMockMap<P>
 }
+
+// implementations
 
 internal class InjectorImpl<P>(
 		override val profile: P,

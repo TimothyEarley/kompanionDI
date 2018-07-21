@@ -3,6 +3,11 @@ package de.earley.kompanionDI.mocking
 import de.earley.kompanionDI.Provider
 import de.earley.kompanionDI.bean
 
+/* Flow is as follows:
+* val foo = [some provider}
+* foo.mock with [the mock]
+*/
+
 interface Mockable<T, P> {
 	infix fun with(mock: Provider<T, P>): MockProvider<T, P>
 	infix fun withBean(mock: T): MockProvider<T, P>

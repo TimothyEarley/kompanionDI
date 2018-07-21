@@ -1,5 +1,5 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.2.40" // no variables allowed in new plugins API
+    id "org.jetbrains.kotlin.jvm" version "1.2.51" // no variables allowed in new plugins API
 }
 
 dependencies {

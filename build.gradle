@@ -1,6 +1,6 @@
 allprojects {
 
-	version '0.3.1'
+	version '0.3.2'
 
 }
 
@@ -14,6 +14,6 @@ subprojects {
 		mavenCentral()
 	}
 
-	ext.kotlin_version = '1.2.40'
+	ext.kotlin_version = '1.2.51'
 
 }
