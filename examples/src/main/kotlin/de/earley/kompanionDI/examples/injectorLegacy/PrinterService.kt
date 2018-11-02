@@ -1,7 +1,8 @@
-package de.earley.kompanionDI.examples.injector
+package de.earley.kompanionDI.examples.injectorLegacy
 
+import de.earley.kompanionDI.Injector
 import de.earley.kompanionDI.Provider
-import de.earley.kompanionDI.createInjector
+import de.earley.kompanionDI.mocking.MockMap
 import de.earley.kompanionDI.mocking.mock
 
 object PrinterService {
@@ -72,8 +73,8 @@ object PrinterService {
 	}
 
 	fun main() {
-		val prodInject = createInjector(Profile.Prod)
-		val testInject = createInjector(Profile.Test)
+		val prodInject = Injector.create(Profile.Prod)
+		val testInject = Injector.create(Profile.Test)
 
 		val printer = prodInject(Printer)
 		printer.print()
@@ -90,7 +91,7 @@ object PrinterService {
 			override fun bar(): String = "Mocked"
 		}
 
-		val mockInject = createInjector(Profile.Prod, DB.mock withValue mockedDB)
+		val mockInject = Injector.create(Profile.Prod, MockMap.of(DB.mock withValue mockedDB))
 
 		val printerWithMock = mockInject(Printer)
 		printerWithMock.print()

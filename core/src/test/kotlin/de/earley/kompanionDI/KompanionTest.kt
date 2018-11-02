@@ -11,7 +11,7 @@ internal class KompanionTest : StringSpec() {
 
         "we can use the KompanionDI to store context" {
 
-            val context = createContext(null)
+            val context = Context.create(null)
             KompanionDI.setupDI(context)
 
             KompanionDI.getInject<Nothing?, Unit>() shouldBe context

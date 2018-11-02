@@ -1,9 +1,9 @@
-package de.earley.kompanionDI.examples.injector
+package de.earley.kompanionDI.examples.injectorLegacy
 
+import de.earley.kompanionDI.Injector
 import de.earley.kompanionDI.Provider
-import de.earley.kompanionDI.createInjector
+import de.earley.kompanionDI.mocking.MockMap
 import de.earley.kompanionDI.mocking.mock
-import de.earley.kompanionDI.mocking.mocksOf
 
 
 interface Heater {
@@ -69,7 +69,7 @@ class CoffeeShop(
 }
 
 fun main(args: Array<String>) {
-	createInjector()(CoffeeShop).maker.brew()
+	Injector.create()(CoffeeShop).maker.brew()
 
 	println("\n\nMocking....")
 
@@ -93,9 +93,9 @@ fun main(args: Array<String>) {
 	}
 
 
-	val mocks = mocksOf(
+	val mocks = MockMap.of(
 			Heater.mock withValue mockedHeater,
 			CoffeeMaker.mock with mockedMaker
 	)
-	createInjector(mocks)(CoffeeShop).maker.brew()
+	Injector.create(mocks)(CoffeeShop).maker.brew()
 }

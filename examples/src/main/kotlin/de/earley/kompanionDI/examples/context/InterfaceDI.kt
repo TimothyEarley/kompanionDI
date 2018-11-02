@@ -67,18 +67,16 @@ object InterfaceDI {
 	fun main() {
 
 		// switch global profile here
-		val ctx: Context<MyDI, Unit> = createContext(
-			MyDIProd
-		)
+		val ctx: Context<MyDI, Unit> = Context.create(MyDIProd)
 
 		ctx { app }.foo()
 
-		val testCtx = createContext(MyDITest)
+		val testCtx = Context.create(MyDITest)
 
 		testCtx { this.app }.foo()
 
 
-		KompanionDI.setupDI(createContext(MyDIProd))
+		KompanionDI.setupDI(Context.create(MyDIProd))
 		Unmanaged()
 
 	}

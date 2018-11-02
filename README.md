@@ -50,7 +50,7 @@ class Bar(private val foo: Foo) {
 // setup DI
 
 // this could also be a class containing environment specific configuration
-type Profile = Unit
+typealias Profile = Unit
 
 interface DI {
 	val foo: Provider<Foo, Profile>
@@ -63,7 +63,7 @@ class BaseDI : DI {
 }
 
 // create the context
-val inject: Context<DI, Profile> = createContext(BaseDI())
+val inject: Context<DI, Profile> = Context.create(BaseDI())
 
 // use it somewhere
 
@@ -82,7 +82,7 @@ class Foo { ... }
 class Bar(private val foo: Foo) { ... }
 
 // setup DI
-type Profile = Unit
+//	typealias Profile = Unit
 
 interface ModuleA {
 	val foo: Provider<Foo, Profile>
@@ -112,7 +112,7 @@ class BaseDI(
 ) : DI, ModuleB by moduleB
 
 // create the context
-val inject: Context<DI, Profile> = createContext(BaseDI())
+val inject: Context<DI, Profile> = Context.create(BaseDI())
 
 // use it somewhere
 
@@ -149,7 +149,7 @@ class BarImpl(private val foo: Foo) : Bar {
 }
 
 // create an injector
-val inject = createInjector()
+val inject = Injector.create()
 
 // use it
 
@@ -176,11 +176,14 @@ open class Foo {
 
 // create the context
 val di = BaseDI()
-val inject: Context<DI, Profile> = createContext(di, mocksOf(
-	di.foo.mock withValue object : Foo() {
-		override fun getData(): Int = 2
-	}
-))
+val inject: Context<DI, Profile> = Context.create(
+    di,
+    MockMap.of(
+        di.foo.mock withValue object : Foo() {
+            override fun getData(): Int = 2
+		}
+	)
+)
 
 // use it somewhere
 

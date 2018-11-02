@@ -1,5 +1,7 @@
 package de.earley.kompanionDI
 
+import de.earley.kompanionDI.providers.lazyValue
+import de.earley.kompanionDI.providers.value
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 

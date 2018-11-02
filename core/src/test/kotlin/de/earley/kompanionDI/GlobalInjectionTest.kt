@@ -45,7 +45,7 @@ internal class GlobalInjectionTest : StringSpec() {
 
 
 	object App {
-		val inject = createMutableInjector(Profile.PROD)
+		var inject = Injector.create(Profile.PROD)
 	}
 
 
@@ -55,17 +55,18 @@ internal class GlobalInjectionTest : StringSpec() {
 
 			Unmanaged().service.foo() shouldBe "Impl: Impl"
 
-			inject.profile = Profile.TEST
+			inject = Injector.create(Profile.TEST)
 
 			shouldThrow<IllegalArgumentException> { Unmanaged() }
 
-			inject.mocks.add(FooDI.mock withValue object : Foo() {
-				override fun bar() = "Mock"
-			})
+			inject = Injector.create(
+					Profile.PROD,
+					MockMap.of(FooDI.mock withValue object : Foo() {
+						override fun bar() = "Mock"
+					})
+			)
 
 			Unmanaged().service.foo() shouldBe "Impl: Mock"
-
-
 		}
 
 	}

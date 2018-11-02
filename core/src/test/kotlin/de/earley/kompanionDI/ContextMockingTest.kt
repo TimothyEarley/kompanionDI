@@ -1,6 +1,8 @@
 package de.earley.kompanionDI
 
+import de.earley.kompanionDI.mocking.MockMap
 import de.earley.kompanionDI.mocking.mock
+import de.earley.kompanionDI.providers.value
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
@@ -41,7 +43,7 @@ internal class ContextMockingTest : StringSpec() {
 
 		"injection works as expected" {
 
-			val ctx: Context<MyDI, Unit> = createContext(MyDIImpl())
+			val ctx: Context<MyDI, Unit> = Context.create(MyDIImpl())
 			ctx.invoke { bar }.getANumber() shouldBe 1
 		}
 
@@ -51,7 +53,7 @@ internal class ContextMockingTest : StringSpec() {
 
 		"we can  mock the dependency to foo" {
 			val di = MyDIImpl()
-			val ctx: Context<MyDI, Unit> = createContext(di, di.foo.mock withValue mock)
+			val ctx: Context<MyDI, Unit> = Context.create(di, MockMap.of(di.foo.mock withValue mock))
 
 			ctx.invoke { bar }.getANumber() shouldBe 2
 		}
@@ -60,7 +62,7 @@ internal class ContextMockingTest : StringSpec() {
 			val di = object : MyDIImpl() {
 				override val foo: Provider<Foo, Unit> = value(mock)
 			}
-			val ctx: Context<MyDI, Unit> = createContext(di)
+			val ctx: Context<MyDI, Unit> = Context.create(di)
 
 			ctx.invoke { bar }.getANumber() shouldBe 2
 		}

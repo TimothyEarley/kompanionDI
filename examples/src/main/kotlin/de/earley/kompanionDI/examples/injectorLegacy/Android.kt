@@ -1,9 +1,10 @@
-package de.earley.kompanionDI.examples.injector
+package de.earley.kompanionDI.examples.injectorLegacy
 
+import de.earley.kompanionDI.Injector
 import de.earley.kompanionDI.Provider
-import de.earley.kompanionDI.createMutableInjector
+import de.earley.kompanionDI.mocking.MockMap
 import de.earley.kompanionDI.mocking.mock
-import de.earley.kompanionDI.singleton
+import de.earley.kompanionDI.providers.singleton
 
 object Android {
 
@@ -70,7 +71,7 @@ object Android {
 
 	object App {
 
-		val inject = createMutableInjector(Profile.PROD)
+		var inject = Injector.create(Profile.PROD)
 
 	}
 }
@@ -85,16 +86,15 @@ fun main(args: Array<String>) {
 	run()
 
 	// test
-	Android.App.inject.profile =
-			Android.Profile.TEST
+	Android.App.inject = Injector.create(Android.Profile.TEST)
 	run()
 
 	// Mock
-	Android.App.inject.mocks.add(
-			Android.DI.interactor.mock withValue object :
-				Android.Interactor {
+	Android.App.inject = Injector.create(
+			Android.Profile.TEST,
+			MockMap.of(Android.DI.interactor.mock withValue object : Android.Interactor {
 				override fun getData(): String = "MOCK"
-			}
+			})
 	)
 	run()
 

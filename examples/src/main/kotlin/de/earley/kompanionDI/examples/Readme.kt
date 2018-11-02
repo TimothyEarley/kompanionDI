@@ -1,11 +1,10 @@
 package de.earley.kompanionDI.examples
 
 import de.earley.kompanionDI.Context
+import de.earley.kompanionDI.Injector
 import de.earley.kompanionDI.Provider
-import de.earley.kompanionDI.createContext
-import de.earley.kompanionDI.createInjector
+import de.earley.kompanionDI.mocking.MockMap
 import de.earley.kompanionDI.mocking.mock
-import de.earley.kompanionDI.mocking.mocksOf
 
 typealias Profile = Unit // not using profiles here
 
@@ -24,7 +23,7 @@ object ReadmeContexts {
 	// setup DI
 
 	// this could also be a class containing environment specific configuration
-	//	type Profile = Unit
+	//	typealias Profile = Unit
 
 	interface DI {
 		val foo: Provider<Foo, Profile>
@@ -37,7 +36,7 @@ object ReadmeContexts {
 	}
 
 	// create the context
-	val inject: Context<DI, Profile> = createContext(BaseDI())
+	val inject: Context<DI, Profile> = Context.create(BaseDI())
 
 	// use it somewhere
 
@@ -59,7 +58,7 @@ object ReadmeMultiModule {
 	}
 
 // setup DI
-//	type Profile = Unit
+//	typealias Profile = Unit
 
 	interface ModuleA {
 		val foo: Provider<Foo, Profile>
@@ -89,7 +88,7 @@ object ReadmeMultiModule {
 	) : DI, ModuleB by moduleB
 
 	// create the context
-	val inject: Context<DI, Profile> = createContext(BaseDI())
+	val inject: Context<DI, Profile> = Context.create(BaseDI())
 
 // use it somewhere
 
@@ -122,7 +121,7 @@ object ReadmeCompanion {
 	}
 
 	// create an injector
-	val inject = createInjector()
+	val inject = Injector.create()
 
 // use it
 
@@ -134,7 +133,7 @@ object ReadmeCompanion {
 
 object ReadmeMocking {
 
-	// these classes could/should be hidden behind interfaces
+	// open up Foo for mocking or use your favorite mocking framework
 	open class Foo {
 		open fun getData() = 1
 	}
@@ -148,7 +147,7 @@ object ReadmeMocking {
 	// setup DI
 
 	// this could also be a class containing environment specific configuration
-	//	type Profile = Unit
+	//	typealias Profile = Unit
 
 	interface DI {
 		val foo: Provider<Foo, Profile>
@@ -162,7 +161,7 @@ object ReadmeMocking {
 
 	// create the context
 	val di = BaseDI()
-	val inject: Context<DI, Profile> = createContext(di, mocksOf(
+	val inject: Context<DI, Profile> = Context.create(di, MockMap.of(
 		di.foo.mock withValue object : Foo() {
 			override fun getData(): Int = 2
 		}
@@ -171,7 +170,7 @@ object ReadmeMocking {
 	// use it somewhere
 
 	fun test() {
-		inject { bar }.printData()
+		inject { bar }.printData() // now prints "2"
 	}
 
 

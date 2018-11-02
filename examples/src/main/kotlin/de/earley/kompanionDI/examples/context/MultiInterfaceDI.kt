@@ -3,7 +3,11 @@
 package de.earley.kompanionDI.examples.context
 
 import de.earley.kompanionDI.*
+import de.earley.kompanionDI.mocking.MockMap
 import de.earley.kompanionDI.mocking.mock
+import de.earley.kompanionDI.providers.lazyValue
+import de.earley.kompanionDI.providers.singleton
+import de.earley.kompanionDI.providers.value
 import java.lang.reflect.Proxy
 
 object MultiInterfaceDI {
@@ -113,7 +117,7 @@ object MultiInterfaceDI {
 	}
 
 	fun main() {
-		val ctx = createContext(BaseDI())
+		val ctx = Context.create(BaseDI())
 		KompanionDI.setupDI(ctx)
 
 
@@ -129,7 +133,7 @@ object MultiInterfaceDI {
 			override val msg: String = "Mocked A!"
 		}
 
-		val ctx = createContext(di, di.serviceA.mock withValue mock)
+		val ctx = Context.create(di, MockMap.of(di.serviceA.mock withValue mock))
 		KompanionDI.setupDI(ctx)
 
 		Unmanaged().foo()

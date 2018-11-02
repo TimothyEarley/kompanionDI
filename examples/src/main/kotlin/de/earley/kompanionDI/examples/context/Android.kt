@@ -1,7 +1,9 @@
 package de.earley.kompanionDI.examples.context
 
 import de.earley.kompanionDI.*
+import de.earley.kompanionDI.mocking.MockMap
 import de.earley.kompanionDI.mocking.mock
+import de.earley.kompanionDI.providers.singleton
 
 object Android {
 
@@ -70,7 +72,7 @@ object Android {
 
 	object App {
 		// var for test purposes
-		var inject: Context<DI, Profile> = createContext(BaseDI(), Profile.PROD)
+		var inject: Context<DI, Profile> = Context.create(BaseDI(), Profile.PROD)
 	}
 }
 
@@ -83,17 +85,19 @@ fun main(args: Array<String>) {
 	run()
 
 	// test
-	Android.App.inject = createContext(Android.BaseDI(), Android.Profile.TEST)
+	Android.App.inject = Context.create(Android.BaseDI(), Android.Profile.TEST)
 	run()
 
 	// Mock
 	val di = Android.BaseDI()
-	Android.App.inject = createContext(
+	Android.App.inject = Context.create(
 		di,
 		Android.Profile.TEST,
-		di.interactor.mock withValue object : Android.Interactor {
-			override fun getData(): String = "MOCK"
-		}
+		MockMap.of(
+				di.interactor.mock withValue object : Android.Interactor {
+					override fun getData(): String = "MOCK"
+				}
+		)
 	)
 	run()
 

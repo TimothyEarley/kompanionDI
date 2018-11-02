@@ -1,8 +1,9 @@
-package de.earley.kompanionDI.examples
+package de.earley.kompanionDI.examples.injectorLegacy
 
 import de.earley.kompanionDI.*
+import de.earley.kompanionDI.mocking.MockMap
 import de.earley.kompanionDI.mocking.mock
-import de.earley.kompanionDI.mocking.mutableMocksOf
+import de.earley.kompanionDI.providers.value
 
 enum class UserProfile {
 	Steve, Peter
@@ -90,25 +91,19 @@ fun main(args: Array<String>) {
 
 	listOf(
 			// profiles
-			createInjector(UserProfile.Steve),
-			createInjector(UserProfile.Peter),
+			Injector.create(UserProfile.Steve),
+			Injector.create(UserProfile.Peter),
 			// Mock by other Dependency
-			createInjector(UserProfile.Steve, sendService.mock with printSendService),
+			Injector.create(UserProfile.Steve, MockMap.of(sendService.mock with printSendService)),
 			// Mock any class by value
-			createInjector(UserProfile.Steve, formatterValue.mock withValue TestFormatter),
+			Injector.create(UserProfile.Steve,  MockMap.of(formatterValue.mock withValue TestFormatter)),
 			// Mock by value
-			createInjector(UserProfile.Steve, user.mock withValue User("This is not Steve!")),
+			Injector.create(UserProfile.Steve,  MockMap.of(user.mock withValue User("This is not Steve!"))),
 			// combine all of them
-			createInjector(UserProfile.Steve,
+			Injector.create(UserProfile.Steve, MockMap.of(
 					sendService.mock with printSendService,
 					formatterValue.mock withValue TestFormatter,
 					user.mock withValue User("This is not Steve!")
-			)
+			))
 	).map { it.invoke(app) }.forEach(App::start)
-
-	// dynamic example
-	val mocks = mutableMocksOf<UserProfile>()
-	if (Math.random() > 0.5) mocks.add(user.mock withValue User("Random user!!!"))
-	createInjector(UserProfile.Steve, mocks)(app).start()
-
 }

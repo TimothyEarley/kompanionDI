@@ -1,5 +1,6 @@
 package de.earley.kompanionDI
 
+import de.earley.kompanionDI.mocking.MockMap
 import de.earley.kompanionDI.mocking.mock
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
@@ -9,7 +10,7 @@ internal class MockingTest : StringSpec() {
 	private interface Foo {
 		fun bar(): String
 
-		companion object : Provider<Foo, Nothing?> by { _, _ -> FooImpl() }
+		companion object : Provider<Foo, Unit> by { _, _ -> FooImpl() }
 	}
 
 
@@ -20,7 +21,7 @@ internal class MockingTest : StringSpec() {
 	private class OtherFooImpl : Foo {
 		override fun bar() = "Other Impl"
 
-		companion object : Provider<Foo, Nothing?> by { _, _ -> OtherFooImpl() }
+		companion object : Provider<Foo, Unit> by { _, _ -> OtherFooImpl() }
 	}
 
 	private class FooWithDependency(
@@ -29,7 +30,7 @@ internal class MockingTest : StringSpec() {
 
 		override fun bar() = "Dependency: ${dependency.bar()}"
 
-		companion object : Provider<FooWithDependency, Nothing?> by { _, inject ->
+		companion object : Provider<FooWithDependency, Unit> by { _, inject ->
 			FooWithDependency(inject(Foo))
 		}
 	}
@@ -40,7 +41,7 @@ internal class MockingTest : StringSpec() {
 	) : Foo {
 		override fun bar() = "One: ${one.bar()}, Two: ${two.bar()}"
 
-		companion object : Provider<FooTwoDependencies, Nothing?> by { _, inject ->
+		companion object : Provider<FooTwoDependencies, Unit> by { _, inject ->
 			FooTwoDependencies(inject(Foo), inject(Foo))
 		}
 	}
@@ -48,20 +49,17 @@ internal class MockingTest : StringSpec() {
 	init {
 
 		"A dependency can have further dependencies" {
-			FooWithDependency.create(null).bar() shouldBe "Dependency: Impl"
+			FooWithDependency.create().bar() shouldBe "Dependency: Impl"
 
 		}
 
 		"This makes the dependency mockable" {
-			FooWithDependency.create(
-					null,
-					Foo.mock with OtherFooImpl
-			).bar() shouldBe "Dependency: Other Impl"
+			FooWithDependency.create(Foo.mock with OtherFooImpl)
+					.bar() shouldBe "Dependency: Other Impl"
 		}
 
 		"Or use an object" {
 			FooWithDependency.create(
-					null,
 					Foo.mock withValue object : Foo {
 						override fun bar() = "Mock"
 					}
@@ -71,7 +69,6 @@ internal class MockingTest : StringSpec() {
 		"You can also create a new instance per Mock" {
 			var count = 0
 			FooTwoDependencies.create(
-					null,
 					Foo.mock with { _, _ ->
 						count++
 						val now = count

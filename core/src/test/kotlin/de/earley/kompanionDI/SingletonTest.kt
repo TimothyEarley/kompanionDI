@@ -2,14 +2,14 @@ package de.earley.kompanionDI
 
 
 import de.earley.kompanionDI.mocking.mock
+import de.earley.kompanionDI.providers.singleton
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
+import kotlin.concurrent.thread
 
 internal class SingletonTest : StringSpec() {
 
-	private enum class Profile {
-		TEST1, TEST2, TEST3_A, TEST3_B, TEST4
-	}
+	object Profile
 
 	private class FooProvide {
 
@@ -22,6 +22,7 @@ internal class SingletonTest : StringSpec() {
 
 	}
 
+	@Suppress("MoveLambdaOutsideParentheses") // breaks code
 	private class FooSingleton {
 
 		companion object : Provider<FooSingleton, Profile> by singleton({ _, _ ->
@@ -33,14 +34,9 @@ internal class SingletonTest : StringSpec() {
 
 	}
 
-	private val dummy: Provider<Any, Profile> = {_, _ -> TODO() }
-
 	init {
-
-		val inject = createMutableInjector(Profile.TEST1)
-
 		"If you choose the provide dependency multiple instances will be created" {
-			inject.profile = Profile.TEST1
+			val inject = Injector.create(Profile)
 			FooProvide.counter = 0
 			val one = inject(FooProvide)
 			val two = inject(FooProvide)
@@ -49,7 +45,7 @@ internal class SingletonTest : StringSpec() {
 		}
 
 		"With singletons, only one instance is created" {
-			inject.profile = Profile.TEST2
+			val inject = Injector.create(Profile)
 			FooSingleton.counter = 0
 			val one = inject(FooSingleton)
 			val two = inject(FooSingleton)
@@ -57,27 +53,20 @@ internal class SingletonTest : StringSpec() {
 			(one === two) shouldBe true
 		}
 
-		"Singletons work with different profiles. Each profile gets its own instance" {
+		"Crude test for thread safety" {
+
+			val inject = Injector.create(Profile)
 			FooSingleton.counter = 0
-			inject.profile = Profile.TEST3_A
-			val one = inject(FooSingleton)
-			inject.profile = Profile.TEST3_B
-			val two = inject(FooSingleton)
-			FooSingleton.counter shouldBe 2
-			(one === two) shouldBe false
+			val instance = inject(FooSingleton)
+			(1..100).map {
+				thread {
+					inject(FooSingleton) shouldBe instance
+				}
+			}.forEach {
+				it.join()
+			}
+			FooSingleton.counter shouldBe 1
 		}
-
-		"Even adding new mocks changes the instance since the mocks could change the desired structure" {
-			inject.profile = Profile.TEST4
-			FooSingleton.counter = 0
-			val one = inject(FooSingleton)
-			inject.mocks.add(dummy.mock.with(dummy))
-			val two = inject(FooSingleton)
-			FooSingleton.counter shouldBe 2
-			(one === two) shouldBe false
-		}
-
-
 	}
 
 }

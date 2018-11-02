@@ -1,7 +1,6 @@
 package de.earley.kompanionDI
 
 import de.earley.kompanionDI.mocking.MockMap
-import de.earley.kompanionDI.mocking.MutableMockMap
 
 /**
  * Utility interface for creating dependency with a given profile and mocks.
@@ -18,43 +17,36 @@ interface Injector<P> {
 	operator fun <T> invoke(provider: Provider<T, P>): T =
 			mocks.get(provider)?.invoke(profile, this)
 					?: provider.invoke(profile, this)
+
+	companion object {
+
+		/**
+		 * Create an injector with [Unit] as the profile and the given [mocks].
+		 */
+		fun create(mocks: MockMap<Unit> = MockMap.empty()): Injector<Unit> =
+				if (mocks.isEmpty()) EmptyInjector
+				else create(Unit, mocks)
+
+		/**
+		 * Create an injector with a given [profile] and the given [mocks].
+		 */
+		fun <P> create(profile: P, mocks: MockMap<P> = MockMap.empty()): Injector<P> = InjectorImpl(profile, mocks)
+
+	}
+
 }
 
 /**
- * The injection function. Creates an instance of T.
- * Uses the mocks and profile it has set.
+ * Fasttrack implementation for injectors with [Unit] profile and no mocks
  */
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // see deprecated
-@Deprecated(
-	message = "Moved inside the Injector interface. Remove the import for this function.",
-	replaceWith = ReplaceWith("invoke(provider)"),
-	level = DeprecationLevel.HIDDEN
-)
-operator fun <T, P> Injector<P>.invoke(provider: Provider<T, P>): T =
-		invoke(provider)
+internal object EmptyInjector : Injector<Unit> {
+	override val profile = Unit
+	override val mocks: MockMap<Unit> = MockMap.empty()
 
-
-/**
- * An [Injector] which can can be mutated.
- * This can lead to strange behaviour when used directly, i.e. two calls to a provider might differ.
- */
-abstract class MutableInjector<P> : Injector<P> {
-	abstract override var profile: P
-	abstract override val mocks: MutableMockMap<P>
+	override fun <T> invoke(provider: Provider<T, Unit>): T = provider.invoke(Unit, this)
 }
-
-// implementations
 
 internal class InjectorImpl<P>(
 		override val profile: P,
 		override val mocks: MockMap<P>
 ) : Injector<P>
-
-@Deprecated(
-	message = "Move away from mutable things",
-	replaceWith = ReplaceWith("InjectorImpl(profile, mocks)")
-)
-internal class MutableInjectorImpl<P>(
-		override var profile: P,
-		override val mocks: MutableMockMap<P>
-) : MutableInjector<P>()

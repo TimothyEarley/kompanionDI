@@ -1,7 +1,6 @@
 package de.earley.kompanionDI.mocking
 
 import de.earley.kompanionDI.Provider
-import java.util.*
 
 interface MockMap<P> {
 
@@ -11,9 +10,9 @@ interface MockMap<P> {
 	fun <T, D : Provider<T, P>> get(provider: D): D?
 
 	/**
-	 * Int representation of the current state
+	 * Returns true if no mocks are registered, otherwise false.
 	 */
-	fun hashState(): Int = 0
+	fun isEmpty(): Boolean
 
 	@Suppress("UNCHECKED_CAST") // EMPTY can be safely cast since it does not do anything
 	companion object {
@@ -22,52 +21,27 @@ interface MockMap<P> {
 		 */
 		fun <P> empty(): MockMap<P> = EMPTY as MockMap<P>
 
-
 		/**
 		 * Create a [MockMap] from the [mocks].
 		 */
 		fun <P> of(vararg mocks: MockProvider<*, P>): MockMap<P> =
 				if (mocks.isEmpty()) MockMap.empty<P>()
-				else MutableMockMap.of(*mocks)
+				else HashMockMap(mocks.associateBy { it.mockedProvider })
 
 		private val EMPTY = object : MockMap<Any?> {
 			override fun <T, D : Provider<T, Any?>> get(provider: D): D? = null
+			override fun isEmpty(): Boolean = true
 		}
 	}
 }
 
-interface MutableMockMap<P> : MockMap<P> {
-	/**
-	 * Add the [mock] to this map. Replaces any previous mock for the same provider.
-	 */
-	fun <T> add(mock: MockProvider<T, P>)
+internal class HashMockMap<P>(
+		private val map: Map<Provider<*, P>, Provider<*, P>>
+) : MockMap<P> {
 
-	companion object {
-		/**
-		 * Create a [MutableMockMap] from the [mocks].
-		 */
-		fun <P> of(vararg mocks: MockProvider<*, P>): MutableMockMap<P> = HashMockMap<P>().apply {
-			mocks.forEach { add(it) }
-		}
-	}
-}
-
-internal class HashMockMap<P> : MutableMockMap<P> {
-
-	// the correspondence between the *'s is checked by the setter (and MockProvider)
-	private val map: MutableMap<Provider<*, P>, Provider<*, P>> = HashMap()
-
-	@Suppress("UNCHECKED_CAST")
+	@Suppress("UNCHECKED_CAST") // guaranteed by MockProvider
 	override fun <T, D : Provider<T, P>> get(provider: D): D? {
 		return map[provider] as D?
 	}
-
-	override fun <T> add(mock: MockProvider<T, P>) {
-		map[mock.mockedProvider] = mock
-	}
-
-	override fun hashState(): Int {
-		// hash each entry
-		return map.entries.hashCode()
-	}
+	override fun isEmpty(): Boolean = map.isEmpty() // should always be false, but call to make sure
 }
