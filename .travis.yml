@@ -1,0 +1,23 @@
+language: java
+
+env:
+  global:
+    - CC_TEST_REPORTER_ID=0dc05ae36b510b455ad6c92f505a590a2cf6ace48a57f140a414cd3dae0ac260
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
+after_script:
+  - JACOCO_SOURCE_PATH=core/src/main/kotlin ./cc-test-reporter format-coverage core/build/reports/jacoco/test/jacocoTestReport.xml  --input-type jacoco
+  - ./cc-test-reporter upload-coverage
+
+# see https://docs.travis-ci.com/user/languages/java/#caching
+before_cache:
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/

@@ -4,6 +4,10 @@ package de.earley.kompanionDI
  * Ability to get an instance from a [Provider].
  */
 interface Context<out DI, P> {
+
+	/**
+	 * Instantiate an object from the provider returned by [[getProvider]]
+	 */
 	operator fun <T> invoke(getProvider: DI.() -> Provider<T, P>): T
 }
 

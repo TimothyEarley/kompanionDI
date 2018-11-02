@@ -59,7 +59,7 @@ internal class GlobalInjectionTest : StringSpec() {
 
 			shouldThrow<IllegalArgumentException> { Unmanaged() }
 
-			inject.mocks.add(FooDI.mock withBean object : Foo() {
+			inject.mocks.add(FooDI.mock withValue object : Foo() {
 				override fun bar() = "Mock"
 			})
 

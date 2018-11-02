@@ -21,6 +21,20 @@ interface Injector<P> {
 }
 
 /**
+ * The injection function. Creates an instance of T.
+ * Uses the mocks and profile it has set.
+ */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // see deprecated
+@Deprecated(
+	message = "Moved inside the Injector interface. Remove the import for this function.",
+	replaceWith = ReplaceWith("invoke(provider)"),
+	level = DeprecationLevel.HIDDEN
+)
+operator fun <T, P> Injector<P>.invoke(provider: Provider<T, P>): T =
+		invoke(provider)
+
+
+/**
  * An [Injector] which can can be mutated.
  * This can lead to strange behaviour when used directly, i.e. two calls to a provider might differ.
  */

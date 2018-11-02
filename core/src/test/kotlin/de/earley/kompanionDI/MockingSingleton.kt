@@ -14,7 +14,7 @@ internal class MockingSingleton : StringSpec() {
 
 		"A singleton can be mocked without confusing the types" {
 
-			val mocks = mocksOf(singleton2.mock withBean "3")
+			val mocks = mocksOf(singleton2.mock withValue "3")
 
 			singleton1.create(mocks) shouldBe "1"
 			singleton2.create(mocks) shouldBe "3"

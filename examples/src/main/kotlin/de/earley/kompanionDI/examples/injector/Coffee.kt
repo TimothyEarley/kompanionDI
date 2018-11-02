@@ -1,4 +1,4 @@
-package de.earley.kompanionDI.examples
+package de.earley.kompanionDI.examples.injector
 
 import de.earley.kompanionDI.Provider
 import de.earley.kompanionDI.createInjector
@@ -38,8 +38,8 @@ class Thermosiphon(
 }
 
 open class CoffeeMaker(
-		private val heater: Heater,
-		private val pump: Pump
+	private val heater: Heater,
+	private val pump: Pump
 ) {
 
 	open fun brew() {
@@ -50,8 +50,8 @@ open class CoffeeMaker(
 
 	companion object : Provider<CoffeeMaker, Unit> by { _, inject ->
 		CoffeeMaker(
-				inject(Heater),
-				inject(Pump)
+			inject(Heater),
+			inject(Pump)
 		)
 	}
 
@@ -82,7 +82,9 @@ fun main(args: Array<String>) {
 
 	// Mock the maker
 	val mockedMaker: Provider<CoffeeMaker, Unit> = { _, inject ->
-		object : CoffeeMaker(inject(Heater), inject(Pump)) {
+		object : CoffeeMaker(inject(Heater), inject(
+			Pump
+		)) {
 			override fun brew() {
 				println("Mock brew!")
 				super.brew()
@@ -92,7 +94,7 @@ fun main(args: Array<String>) {
 
 
 	val mocks = mocksOf(
-			Heater.mock withBean mockedHeater,
+			Heater.mock withValue mockedHeater,
 			CoffeeMaker.mock with mockedMaker
 	)
 	createInjector(mocks)(CoffeeShop).maker.brew()

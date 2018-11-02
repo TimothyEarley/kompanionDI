@@ -62,7 +62,7 @@ internal class MockingTest : StringSpec() {
 		"Or use an object" {
 			FooWithDependency.create(
 					null,
-					Foo.mock withBean object : Foo {
+					Foo.mock withValue object : Foo {
 						override fun bar() = "Mock"
 					}
 			).bar() shouldBe "Dependency: Mock"

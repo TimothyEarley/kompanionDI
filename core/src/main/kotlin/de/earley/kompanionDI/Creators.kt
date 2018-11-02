@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package de.earley.kompanionDI
 
 import de.earley.kompanionDI.mocking.*

@@ -1,14 +1,32 @@
+import me.champeau.gradle.japicmp.JapicmpTask
+
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.2.51" // no variables allowed in new plugins API
+  id "org.jetbrains.kotlin.jvm" version "1.2.51" // no variables allowed in new plugins API
+  id 'me.champeau.gradle.japicmp' version '0.2.6'
+  id 'jacoco'
+}
+
+configurations {
+	// Provide a dependency for the japicmp task
+	baseline
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-	testCompile 'io.kotlintest:kotlintest-runner-junit5:3.0.0'
+  compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+	testCompile 'io.kotlintest:kotlintest-runner-junit5:3.1.7'
+
+	baseline("com.github.TimothyEarley.kompanionDI:core:$core_baseline") {
+		transitive = false
+		force = true
+	}
 }
 
 compileKotlin {
     kotlinOptions.jvmTarget = "1.6"
+}
+
+test {
+  useJUnitPlatform()
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -19,3 +37,26 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 artifacts {
 	archives sourcesJar
 }
+
+// code covergae
+jacocoTestReport {
+    group = "Reporting"
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.destination file("${buildDir}/reports/coverage")
+    }
+}
+check.dependsOn(jacocoTestReport)
+
+// compare binary compatibility
+task japicmp(type: JapicmpTask, dependsOn: 'jar') {
+	oldClasspath = configurations.baseline
+	newClasspath = files(jar.archivePath)
+	onlyBinaryIncompatibleModified = true
+	failOnModification = true
+	includeSynthetic = true
+	txtOutputFile = file("${project.buildDir}/reports/japi/japi.txt")
+	htmlOutputFile = file("${project.buildDir}/reports/japi/japi.html")
+}
+check.dependsOn(japicmp)

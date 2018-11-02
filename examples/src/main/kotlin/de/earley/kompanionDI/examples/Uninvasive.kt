@@ -63,7 +63,7 @@ object TestFormatter : Formatter {
 
 // these could all be static extension functions, if such a thing existed (and HKT)
 
-val formatterBean: Provider<Formatter, UserProfile> = bean(RealFormatter)
+val formatterValue: Provider<Formatter, UserProfile> = value(RealFormatter)
 
 val user: Provider<User, UserProfile> = { profile, _ -> when(profile) {
 	UserProfile.Steve -> User("Steve")
@@ -71,7 +71,7 @@ val user: Provider<User, UserProfile> = { profile, _ -> when(profile) {
 }}
 
 val sendService: Provider<SendService, UserProfile> = { _, inject ->
-	EmailSendService(inject(formatterBean))
+	EmailSendService(inject(formatterValue))
 }
 
 val app: Provider<App, UserProfile> = { _, inject ->
@@ -83,7 +83,7 @@ val app: Provider<App, UserProfile> = { _, inject ->
 
 // test dep
 val printSendService: Provider<PrintSendService, UserProfile> = { _, inject ->
-	PrintSendService(inject(formatterBean))
+	PrintSendService(inject(formatterValue))
 }
 
 fun main(args: Array<String>) {
@@ -94,21 +94,21 @@ fun main(args: Array<String>) {
 			createInjector(UserProfile.Peter),
 			// Mock by other Dependency
 			createInjector(UserProfile.Steve, sendService.mock with printSendService),
-			// Mock any class by bean
-			createInjector(UserProfile.Steve, formatterBean.mock withBean TestFormatter),
-			// Mock by bean
-			createInjector(UserProfile.Steve, user.mock withBean User("This is not Steve!")),
+			// Mock any class by value
+			createInjector(UserProfile.Steve, formatterValue.mock withValue TestFormatter),
+			// Mock by value
+			createInjector(UserProfile.Steve, user.mock withValue User("This is not Steve!")),
 			// combine all of them
 			createInjector(UserProfile.Steve,
 					sendService.mock with printSendService,
-					formatterBean.mock withBean TestFormatter,
-					user.mock withBean User("This is not Steve!")
+					formatterValue.mock withValue TestFormatter,
+					user.mock withValue User("This is not Steve!")
 			)
 	).map { it.invoke(app) }.forEach(App::start)
 
 	// dynamic example
 	val mocks = mutableMocksOf<UserProfile>()
-	if (Math.random() > 0.5) mocks.add(user.mock withBean User("Random user!!!"))
+	if (Math.random() > 0.5) mocks.add(user.mock withValue User("Random user!!!"))
 	createInjector(UserProfile.Steve, mocks)(app).start()
 
 }

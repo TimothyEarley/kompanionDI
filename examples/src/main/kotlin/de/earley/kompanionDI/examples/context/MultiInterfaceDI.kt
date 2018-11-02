@@ -1,10 +1,9 @@
 @file:Suppress("unused")
 
-package de.earley.kompanionDI.examples
+package de.earley.kompanionDI.examples.context
 
 import de.earley.kompanionDI.*
 import de.earley.kompanionDI.mocking.mock
-import de.earley.kompanionDI.mocking.mocksOf
 import java.lang.reflect.Proxy
 
 object MultiInterfaceDI {
@@ -32,8 +31,8 @@ object MultiInterfaceDI {
 	}
 
 	class ServiceBImpl(
-			serviceA: ServiceA,
-			restServerB: RestServerB
+		serviceA: ServiceA,
+		restServerB: RestServerB
 	): ServiceB {
 		override val msg = "B: (${serviceA.msg}: ${restServerB.msg})"
 	}
@@ -53,29 +52,43 @@ object MultiInterfaceDI {
 
 	open class BaseNetworkDI: NetworkDI {
 		@Suppress("UNCHECKED_CAST")
-		override val restBase: Provider<RestBase, Unit> = lazyBean { object : RestBase {
+		override val restBase: Provider<RestBase, Unit> = lazyValue { object : RestBase {
 			override fun <T: HasMessage> create(clazz: Class<T>): T = Proxy.newProxyInstance(
 					clazz.classLoader,
-					arrayOf(clazz),
-					{ _, method, _ -> method.name + " by proxy" }
-			) as T
+					arrayOf(clazz)
+			) { _, method, _ -> method.name + " by proxy" } as T
 		}}
-		override val restServerA: Provider<RestServerA, Unit> = { _, inject -> inject(restBase).create(RestServerA::class.java) }
-		override val restServerB: Provider<RestServerB, Unit> = { _, inject -> inject(restBase).create(RestServerB::class.java) }
+
+		override val restServerA: Provider<RestServerA, Unit> = { _, inject -> inject(restBase)
+			.create(RestServerA::class.java)
+		}
+
+		override val restServerB: Provider<RestServerB, Unit> = { _, inject -> inject(restBase)
+			.create(RestServerB::class.java)
+		}
 	}
 
 	open class BaseServiceDI(
 			networkDI: NetworkDI
 	) : ServiceDI, NetworkDI by networkDI {
-		override val serviceA: Provider<ServiceA, Unit> = singleton { _, inject -> ServiceAImpl(inject(restServerA)) }
-		override val serviceB: Provider<ServiceB, Unit> = singleton { _, inject -> ServiceBImpl(inject(serviceA), inject(restServerB)) }
+		override val serviceA: Provider<ServiceA, Unit> = singleton { _, inject ->
+			ServiceAImpl(inject(restServerA))
+		}
+		override val serviceB: Provider<ServiceB, Unit> = singleton { _, inject ->
+			ServiceBImpl(
+				inject(serviceA),
+				inject(restServerB)
+			)
+		}
 	}
 
 	// pulling it all together
 
 	open class BaseDI(
-			networkDI: NetworkDI = BaseNetworkDI(),
-			serviceDI: ServiceDI = BaseServiceDI(networkDI)
+		networkDI: NetworkDI = BaseNetworkDI(),
+		serviceDI: ServiceDI = BaseServiceDI(
+			networkDI
+		)
 	) : NetworkDI by networkDI, ServiceDI by serviceDI
 
 	val inject: Context<ServiceDI, Unit>
@@ -84,15 +97,17 @@ object MultiInterfaceDI {
 	// app
 	class Unmanaged {
 		private val s = inject { serviceB }
-		fun foo() = print(s.msg)
+		fun foo() = println(s.msg)
 	}
 
 	// test
 	class TestNetworkDI : BaseNetworkDI() {
-		override val restServerA: Provider<RestServerA, Unit> = bean(object : RestServerA {
+		override val restServerA: Provider<RestServerA, Unit> = value(object :
+			RestServerA {
 			override val msg: String = "Test A"
 		})
-		override val restServerB: Provider<RestServerB, Unit> = bean(object : RestServerB {
+		override val restServerB: Provider<RestServerB, Unit> = value(object :
+			RestServerB {
 			override val msg: String = "Test B"
 		})
 	}
@@ -108,15 +123,13 @@ object MultiInterfaceDI {
 
 	fun test() {
 
-		//TODO mocks are broken in this design
 		val di = BaseDI(networkDI = TestNetworkDI())
+
 		val mock = object : ServiceA {
 			override val msg: String = "Mocked A!"
 		}
 
-		val mockProvider = di.serviceA.mock withBean mock
-
-		val ctx = createContext(di, mocks = mocksOf(mockProvider))
+		val ctx = createContext(di, di.serviceA.mock withValue mock)
 		KompanionDI.setupDI(ctx)
 
 		Unmanaged().foo()
@@ -126,5 +139,6 @@ object MultiInterfaceDI {
 }
 
 fun main(args: Array<String>) {
+	MultiInterfaceDI.main()
 	MultiInterfaceDI.test()
 }

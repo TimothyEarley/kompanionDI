@@ -1,4 +1,4 @@
-package de.earley.kompanionDI.examples
+package de.earley.kompanionDI.examples.context
 
 import de.earley.kompanionDI.*
 
@@ -17,6 +17,8 @@ object InterfaceDI {
 		}
 	}
 
+	// Usage
+
 	open class DepA : Instrumented()
 
 	class DepB(a: DepA) : Instrumented(a)
@@ -31,6 +33,8 @@ object InterfaceDI {
 
 	}
 
+	// Setup
+
 	interface MyDI {
 		val a: Provider<DepA, Unit>
 		val b: Provider<DepB, Unit>
@@ -39,8 +43,12 @@ object InterfaceDI {
 
 	abstract class MyDIBase : MyDI {
 		override val a: Provider<DepA, Unit> = { _, _ -> DepA() }
-		override val b: Provider<DepB, Unit> = { _, inject -> DepB(inject(a)) }
-		override val app: Provider<App, Unit> = { _, inject -> App(inject(b)) }
+		override val b: Provider<DepB, Unit> = { _, inject ->
+			DepB(inject(a))
+		}
+		override val app: Provider<App, Unit> = { _, inject ->
+			App(inject(b))
+		}
 	}
 
 	class TestA : DepA()
@@ -59,7 +67,9 @@ object InterfaceDI {
 	fun main() {
 
 		// switch global profile here
-		val ctx: Context<MyDI, Unit> = createContext(MyDIProd)
+		val ctx: Context<MyDI, Unit> = createContext(
+			MyDIProd
+		)
 
 		ctx { app }.foo()
 

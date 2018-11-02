@@ -1,4 +1,4 @@
-package de.earley.kompanionDI.examples
+package de.earley.kompanionDI.examples.injector
 
 import de.earley.kompanionDI.Provider
 import de.earley.kompanionDI.createMutableInjector
@@ -14,7 +14,8 @@ object Android {
 	// unmanaged
 	class ActivityImpl : Activity {
 
-		private val presenter: Presenter = App.inject(DI.presenter)
+		private val presenter: Presenter =
+			App.inject(DI.presenter)
 
 		fun doStuff() {
 			presenter.doStuff(this)
@@ -58,11 +59,11 @@ object Android {
 			PresenterImpl(inject(interactor))
 		}
 
-		val interactor: Provider<Interactor, Profile> = singleton({ p, _ ->
+		val interactor: Provider<Interactor, Profile> = singleton { p, _ ->
 			object : Interactor {
 				override fun getData() = p.name
 			}
-		})
+		}
 	}
 
 // App
@@ -84,12 +85,14 @@ fun main(args: Array<String>) {
 	run()
 
 	// test
-	Android.App.inject.profile = Android.Profile.TEST
+	Android.App.inject.profile =
+			Android.Profile.TEST
 	run()
 
 	// Mock
 	Android.App.inject.mocks.add(
-			Android.DI.interactor.mock withBean object : Android.Interactor {
+			Android.DI.interactor.mock withValue object :
+				Android.Interactor {
 				override fun getData(): String = "MOCK"
 			}
 	)

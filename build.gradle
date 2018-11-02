@@ -1,7 +1,9 @@
+plugins {
+	id 'com.palantir.git-version' version '0.11.0'
+}
+
 allprojects {
-
-	version '0.3.2'
-
+	version gitVersion()
 }
 
 subprojects {
@@ -12,8 +14,14 @@ subprojects {
 
 	repositories {
 		mavenCentral()
+		jcenter()
+		maven { url("https://jitpack.io") }
 	}
 
-	ext.kotlin_version = '1.2.51'
+	ext {
+		// lowest binary compatible version
+		core_baseline = '0.3.1'
+		kotlin_version = '1.2.51'
+	}
 
 }

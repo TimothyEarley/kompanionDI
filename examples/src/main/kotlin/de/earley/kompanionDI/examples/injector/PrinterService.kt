@@ -1,4 +1,4 @@
-package de.earley.kompanionDI.examples
+package de.earley.kompanionDI.examples.injector
 
 import de.earley.kompanionDI.Provider
 import de.earley.kompanionDI.createInjector
@@ -54,16 +54,16 @@ object PrinterService {
 
 		companion object : Provider<Printer, Profile> by { _, inject ->
 			PrinterImpl(
-					inject(DB),
-					inject(Service)
+				inject(DB),
+				inject(Service)
 			)
 		}
 
 	}
 
 	class PrinterImpl(
-			private val db: DB,
-			private val service: Service
+		private val db: DB,
+		private val service: Service
 	) : Printer {
 		override fun print() {
 			println("Using db " + db.bar())
@@ -80,8 +80,8 @@ object PrinterService {
 
 		// use prod for printer but mockedBy for service
 		val testPrinter = PrinterImpl(
-				prodInject(DB),
-				testInject(Service)
+			prodInject(DB),
+			testInject(Service)
 		)
 		testPrinter.print()
 
@@ -90,7 +90,7 @@ object PrinterService {
 			override fun bar(): String = "Mocked"
 		}
 
-		val mockInject = createInjector(Profile.Prod, DB.mock withBean mockedDB)
+		val mockInject = createInjector(Profile.Prod, DB.mock withValue mockedDB)
 
 		val printerWithMock = mockInject(Printer)
 		printerWithMock.print()

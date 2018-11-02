@@ -51,14 +51,14 @@ internal class ContextMockingTest : StringSpec() {
 
 		"we can  mock the dependency to foo" {
 			val di = MyDIImpl()
-			val ctx: Context<MyDI, Unit> = createContext(di, di.foo.mock withBean mock)
+			val ctx: Context<MyDI, Unit> = createContext(di, di.foo.mock withValue mock)
 
 			ctx.invoke { bar }.getANumber() shouldBe 2
 		}
 
 		"Or use a different DI implementation" {
 			val di = object : MyDIImpl() {
-				override val foo: Provider<Foo, Unit> = bean(mock)
+				override val foo: Provider<Foo, Unit> = value(mock)
 			}
 			val ctx: Context<MyDI, Unit> = createContext(di)
 
