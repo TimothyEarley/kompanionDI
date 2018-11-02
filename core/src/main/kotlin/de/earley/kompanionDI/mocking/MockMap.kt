@@ -5,6 +5,9 @@ import java.util.*
 
 interface MockMap<P> {
 
+	/**
+	 * Try to get a mock for [provider]. If none exist in this map, return null.
+	 */
 	fun <T, D : Provider<T, P>> get(provider: D): D?
 
 	/**
@@ -14,7 +17,18 @@ interface MockMap<P> {
 
 	@Suppress("UNCHECKED_CAST") // EMPTY can be safely cast since it does not do anything
 	companion object {
+		/**
+		 * Create a empty [MockMap]
+		 */
 		fun <P> empty(): MockMap<P> = EMPTY as MockMap<P>
+
+
+		/**
+		 * Create a [MockMap] from the [mocks].
+		 */
+		fun <P> of(vararg mocks: MockProvider<*, P>): MockMap<P> =
+				if (mocks.isEmpty()) MockMap.empty<P>()
+				else MutableMockMap.of(*mocks)
 
 		private val EMPTY = object : MockMap<Any?> {
 			override fun <T, D : Provider<T, Any?>> get(provider: D): D? = null
@@ -23,7 +37,19 @@ interface MockMap<P> {
 }
 
 interface MutableMockMap<P> : MockMap<P> {
+	/**
+	 * Add the [mock] to this map. Replaces any previous mock for the same provider.
+	 */
 	fun <T> add(mock: MockProvider<T, P>)
+
+	companion object {
+		/**
+		 * Create a [MutableMockMap] from the [mocks].
+		 */
+		fun <P> of(vararg mocks: MockProvider<*, P>): MutableMockMap<P> = HashMockMap<P>().apply {
+			mocks.forEach { add(it) }
+		}
+	}
 }
 
 internal class HashMockMap<P> : MutableMockMap<P> {
@@ -42,6 +68,6 @@ internal class HashMockMap<P> : MutableMockMap<P> {
 
 	override fun hashState(): Int {
 		// hash each entry
-		return Objects.hash(*map.entries.toTypedArray())
+		return map.entries.hashCode()
 	}
 }

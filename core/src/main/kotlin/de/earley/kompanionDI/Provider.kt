@@ -42,7 +42,7 @@ fun <T, P> lazyValue(value: () -> T): Provider<T, P> {
  * first value is requested.
  */
 @Deprecated(
-	replaceWith = ReplaceWith("lazyValue"),
+	replaceWith = ReplaceWith("lazyValue(value)"),
 	message = "Replace with better named lazyValue",
 	level = DeprecationLevel.HIDDEN
 )
@@ -57,7 +57,7 @@ fun <T, P> value(value: T): Provider<T, P> = { _, _ -> value }
  * A straightforward [Provider] that always returns [value].
  */
 @Deprecated(
-	replaceWith = ReplaceWith("value"),
+	replaceWith = ReplaceWith("value(value)"),
 	message = "Replace with better named value",
 	level = DeprecationLevel.HIDDEN
 )

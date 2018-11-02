@@ -4,6 +4,7 @@ plugins {
   id "org.jetbrains.kotlin.jvm" version "1.2.51" // no variables allowed in new plugins API
   id 'me.champeau.gradle.japicmp' version '0.2.6'
   id 'jacoco'
+  id 'io.gitlab.arturbosch.detekt' version '1.0.0.RC9.2'
 }
 
 configurations {
@@ -60,3 +61,8 @@ task japicmp(type: JapicmpTask, dependsOn: 'jar') {
 	htmlOutputFile = file("${project.buildDir}/reports/japi/japi.html")
 }
 check.dependsOn(japicmp)
+
+
+detekt {
+  config = files("detekt.yml") 
+}

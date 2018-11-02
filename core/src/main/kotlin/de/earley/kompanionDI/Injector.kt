@@ -50,6 +50,10 @@ internal class InjectorImpl<P>(
 		override val mocks: MockMap<P>
 ) : Injector<P>
 
+@Deprecated(
+	message = "Move away from mutable things",
+	replaceWith = ReplaceWith("InjectorImpl(profile, mocks)")
+)
 internal class MutableInjectorImpl<P>(
 		override var profile: P,
 		override val mocks: MutableMockMap<P>
