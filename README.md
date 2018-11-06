@@ -25,7 +25,7 @@ The library can be used with [jitpack](https://jitpack.io). Follow the instructi
 
 ```groovy
 dependencies {
-	implementation 'com.github.TimothyEarley.kompanionDI:core:0.3.2'
+	implementation 'com.github.TimothyEarley.kompanionDI:core:0.4.0'
 }
 ```
 
