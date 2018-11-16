@@ -21,14 +21,12 @@ interface Injector<P> {
 	companion object {
 
 		/**
-		 * Create an injector with [Unit] as the profile and the given [mocks].
+		 * Create a new injector with [Unit] as the profile and the given [mocks].
 		 */
-		fun create(mocks: MockMap<Unit> = MockMap.empty()): Injector<Unit> =
-				if (mocks.isEmpty()) EmptyInjector
-				else create(Unit, mocks)
+		fun create(mocks: MockMap<Unit> = MockMap.empty()): Injector<Unit> = create(Unit, mocks)
 
 		/**
-		 * Create an injector with a given [profile] and the given [mocks].
+		 * Create a new injector with a given [profile] and the given [mocks].
 		 */
 		fun <P> create(profile: P, mocks: MockMap<P> = MockMap.empty()): Injector<P> = InjectorImpl(profile, mocks)
 
@@ -36,17 +34,7 @@ interface Injector<P> {
 
 }
 
-/**
- * Fasttrack implementation for injectors with [Unit] profile and no mocks
- */
-internal object EmptyInjector : Injector<Unit> {
-	override val profile = Unit
-	override val mocks: MockMap<Unit> = MockMap.empty()
-
-	override fun <T> invoke(provider: Provider<T, Unit>): T = provider.invoke(Unit, this)
-}
-
-internal class InjectorImpl<P>(
+private class InjectorImpl<P>(
 		override val profile: P,
 		override val mocks: MockMap<P>
 ) : Injector<P>

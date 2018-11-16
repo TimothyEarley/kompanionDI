@@ -1,7 +1,5 @@
 package de.earley.kompanionDI
 
-
-import de.earley.kompanionDI.mocking.mock
 import de.earley.kompanionDI.providers.singleton
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
@@ -9,11 +7,9 @@ import kotlin.concurrent.thread
 
 internal class SingletonTest : StringSpec() {
 
-	object Profile
-
 	private class FooProvide {
 
-		companion object : Provider<FooProvide, Profile> by { _, _ ->
+		companion object : Provider<FooProvide, Unit> by { _, _ ->
 			FooProvide.counter++
 			FooProvide()
 		} {
@@ -25,7 +21,7 @@ internal class SingletonTest : StringSpec() {
 	@Suppress("MoveLambdaOutsideParentheses") // breaks code
 	private class FooSingleton {
 
-		companion object : Provider<FooSingleton, Profile> by singleton({ _, _ ->
+		companion object : Provider<FooSingleton, Unit> by singleton({ _, _ ->
 			FooSingleton.counter++
 			FooSingleton()
 		}) {
@@ -36,7 +32,7 @@ internal class SingletonTest : StringSpec() {
 
 	init {
 		"If you choose the provide dependency multiple instances will be created" {
-			val inject = Injector.create(Profile)
+			val inject = Injector.create()
 			FooProvide.counter = 0
 			val one = inject(FooProvide)
 			val two = inject(FooProvide)
@@ -45,7 +41,7 @@ internal class SingletonTest : StringSpec() {
 		}
 
 		"With singletons, only one instance is created" {
-			val inject = Injector.create(Profile)
+			val inject = Injector.create()
 			FooSingleton.counter = 0
 			val one = inject(FooSingleton)
 			val two = inject(FooSingleton)
@@ -55,7 +51,7 @@ internal class SingletonTest : StringSpec() {
 
 		"Crude test for thread safety" {
 
-			val inject = Injector.create(Profile)
+			val inject = Injector.create()
 			FooSingleton.counter = 0
 			val instance = inject(FooSingleton)
 			(1..100).map {
@@ -66,6 +62,18 @@ internal class SingletonTest : StringSpec() {
 				it.join()
 			}
 			FooSingleton.counter shouldBe 1
+		}
+
+		"Each injector has its own singleton instance" {
+			val injectA = Injector.create()
+			val injectB = Injector.create()
+			val a1 = injectA(FooSingleton)
+			val a2 = injectA(FooSingleton)
+			val b1 = injectB(FooSingleton)
+			val b2 = injectB(FooSingleton)
+			(a1 === a2) shouldBe true
+			(b1 === b2) shouldBe true
+			(a1 === b1) shouldBe false
 		}
 	}
 

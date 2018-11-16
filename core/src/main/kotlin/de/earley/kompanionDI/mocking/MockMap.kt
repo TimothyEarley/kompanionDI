@@ -25,7 +25,7 @@ interface MockMap<P> {
 		 * Create a [MockMap] from the [mocks].
 		 */
 		fun <P> of(vararg mocks: MockProvider<*, P>): MockMap<P> =
-				if (mocks.isEmpty()) MockMap.empty<P>()
+				if (mocks.isEmpty()) MockMap.empty()
 				else HashMockMap(mocks.associateBy { it.mockedProvider })
 
 		private val EMPTY = object : MockMap<Any?> {
@@ -35,7 +35,7 @@ interface MockMap<P> {
 	}
 }
 
-internal class HashMockMap<P>(
+private class HashMockMap<P>(
 		private val map: Map<Provider<*, P>, Provider<*, P>>
 ) : MockMap<P> {
 

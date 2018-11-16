@@ -19,7 +19,7 @@ subprojects {
 	}
 
 	ext {
-		// lowest binary compatible version (if set to 'SKIP' no compatibility tests are done tests are done)
+		// lowest binary compatible version (if set to 'SKIP' no compatibility tests are done)
 		core_baseline = 'SKIP'
 		kotlin_version = '1.2.51'
 	}

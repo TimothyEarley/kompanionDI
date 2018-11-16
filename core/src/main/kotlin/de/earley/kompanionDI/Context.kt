@@ -34,7 +34,7 @@ interface Context<out DI, P> {
  * Main implementation of [Context].
  * Stores a reference to the collection of providers ([DI]) and an [Injector]
  */
-internal class ContextBackedByInjector<out DI, P>(
+private class ContextBackedByInjector<out DI, P>(
 		private val di: DI,
 		private val injector: Injector<P>
 ): Context<DI, P> {
