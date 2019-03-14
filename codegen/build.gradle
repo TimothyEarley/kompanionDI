@@ -1,0 +1,19 @@
+plugins {
+	id "org.jetbrains.kotlin.jvm" version "1.3.21" // no variables allowed in new plugins API
+	id "org.jetbrains.kotlin.kapt" version "1.3.21"
+}
+
+dependencies {
+	compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+	compile project(':core')
+
+	implementation("com.google.auto.service:auto-service:1.0-rc4")
+	kapt("com.google.auto.service:auto-service:1.0-rc4")
+
+	implementation("com.squareup:kotlinpoet:1.0.1")
+	implementation("me.eugeniomarletti.kotlin.metadata:kotlin-metadata:1.4.0")
+}
+
+compileKotlin {
+	kotlinOptions.jvmTarget = "1.6"
+}

@@ -1,4 +1,4 @@
 rootProject.name = 'kompanionDI'
 include 'core'
 include 'examples'
-
+include 'codegen'
