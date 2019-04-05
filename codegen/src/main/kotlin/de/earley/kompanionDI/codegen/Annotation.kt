@@ -2,6 +2,9 @@ package de.earley.kompanionDI.codegen
 
 import kotlin.reflect.KClass
 
+
+//TODO add options for wrapper (e.g. singleton)
+
 // should be generic, but that is not possible in java which is used by kapt
 // https://discuss.kotlinlang.org/t/using-generic-annotation-classes-from-java/4332
 annotation class ProviderFor(
@@ -17,4 +20,9 @@ annotation class ProviderFor(
 annotation class Module(
         val l: Array<ProviderFor>,
         val profile: KClass<*>
+)
+
+
+annotation class Component(
+        val module: String = "DI"
 )

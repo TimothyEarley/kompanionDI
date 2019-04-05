@@ -6,7 +6,7 @@ import de.earley.kompanionDI.codegen.Module
 import de.earley.kompanionDI.codegen.ProviderFor
 import de.earley.kompanionDI.providers.value
 
-object CodegenTest {
+object ModuleGenTest {
 
     interface ServiceA {
         fun a(): String
@@ -50,17 +50,17 @@ object CodegenTest {
     ], profile = Unit::class)
     interface TestDI : DI
 
-    class ManualTest : DIImpl() {
-        override val serviceB: Provider<ServiceB, Unit> = value(ServiceBTest())
-    }
+//    class ManualTest : DIImpl() {
+//        override val serviceB: Provider<ServiceB, Unit> = value(ServiceBTest())
+//    }
 }
 
 fun main() {
-    test(Context.create(DIImpl()))
-    test(Context.create(TestDIImpl()))
-    test(Context.create(CodegenTest.ManualTest()))
+//    test(Context.create(DIImpl()))
+//    test(Context.create(TestDIImpl()))
+//    test(Context.create(ModuleGenTest.ManualTest()))
 }
-
-fun test(inject: Context<DISpec, Unit>) {
-    inject { app }.app()
-}
+//
+//fun test(inject: Context<DISpec, Unit>) {
+//    inject { app }.app()
+//}

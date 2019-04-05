@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_ANONYMOUS_PARAMETER")
+
 package de.earley.kompanionDI.examples
 
 import de.earley.kompanionDI.Context

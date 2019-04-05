@@ -13,7 +13,7 @@ configurations {
 }
 
 dependencies {
-  compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 	testCompile 'io.kotlintest:kotlintest-runner-junit5:3.1.7'
 
 	if (core_baseline != "SKIP") {
@@ -41,7 +41,7 @@ artifacts {
 	archives sourcesJar
 }
 
-// code covergae
+// code coverage
 jacocoTestReport {
     group = "Reporting"
     reports {
