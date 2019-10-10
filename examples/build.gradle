@@ -9,4 +9,12 @@ dependencies {
 
 	compile project(':codegen')
 	kapt project(':codegen')
+
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.2")
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.2")
+	testImplementation 'com.github.tschuchortdev:kotlin-compile-testing:1.2.3'
+}
+
+test {
+	useJUnitPlatform()
 }

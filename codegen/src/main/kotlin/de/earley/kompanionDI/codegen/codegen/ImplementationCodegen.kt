@@ -11,9 +11,13 @@ fun implementationSpec(
         specInterface: TypeName,
         interfaces: List<InterfaceSpec>,
         providers: List<ProviderSpec>,
-        profile: TypeName
+        profile: TypeName,
+        inheritFrom: TypeName?
 ): TypeSpec = TypeSpec.classBuilder(className)
         .addSuperinterface(specInterface)
+        .apply {
+            if (inheritFrom != null) addSuperinterface(inheritFrom)
+        }
         .addModifiers(KModifier.OPEN)
         .primaryConstructor(FunSpec.constructorBuilder()
                 .apply {

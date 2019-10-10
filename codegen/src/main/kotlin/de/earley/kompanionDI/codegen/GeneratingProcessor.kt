@@ -3,7 +3,6 @@ package de.earley.kompanionDI.codegen
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
-import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 import kotlin.reflect.KClass
@@ -33,11 +32,11 @@ abstract class GeneratingProcessor : AbstractProcessor() {
             func(roundEnv.getElementsAnnotatedWith(type.java) as Set<TypeElement>)
         }
 
-        finish()
+        finish(roundEnv)
 
         return false // true
     }
 
-    open fun finish() = Unit
+    open fun finish(roundEnv: RoundEnvironment) = Unit
 
 }

@@ -60,5 +60,5 @@ class ComponentProcessor : GeneratingProcessor() {
 }
 
 
-private fun TypeElement.getPrimaryInterfaceOrSelf(): TypeElement =
+fun TypeElement.getPrimaryInterfaceOrSelf(): TypeElement =
         (interfaces.singleOrNull() as? DeclaredType)?.asElement() as? TypeElement ?: this

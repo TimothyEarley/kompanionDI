@@ -1,5 +1,6 @@
 package de.earley.kompanionDI.codegen
 
+import java.lang.annotation.Inherited
 import kotlin.reflect.KClass
 
 
@@ -25,4 +26,16 @@ annotation class Module(
 
 annotation class Component(
         val module: String = "DI"
+)
+
+annotation class ComponentModule(
+        val dependencies: Array<KClass<*>> = [],
+        val inheritFrom: KClass<*> = Any::class
+)
+
+@Repeatable
+@Retention(AnnotationRetention.SOURCE)
+annotation class TypedComponent(
+        val module: KClass<*>
+//TODO injection type (singleton, scoped?, factory)
 )

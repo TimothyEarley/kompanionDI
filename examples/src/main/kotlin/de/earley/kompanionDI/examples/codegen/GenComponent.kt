@@ -21,7 +21,7 @@ object ComponentGenTest {
         fun b(): String
     }
 
-    @Component
+    @Component("Services")
     class ServiceBImpl(private val a: ServiceA) : ServiceB {
         override fun b(): String = "b: " + a.a()
     }
