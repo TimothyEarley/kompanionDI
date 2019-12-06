@@ -33,14 +33,14 @@ class TypedComponentProcessor : GeneratingProcessor() {
     lateinit var components: Set<TypeElement>
     lateinit var providers: Set<ExecutableElement>
     init {
-        process<ComponentModule> {
+        process<Module> {
             modules = it
         }
-        process<TypedComponent> { s ->
+        process<Component> { s ->
             @Suppress("UNCHECKED_CAST") // has to be on a class
             components = s as Set<TypeElement>
         }
-        process<TypedProvide> { s ->
+        process<Provide> { s ->
             @Suppress("UNCHECKED_CAST") // has to be on a function
             providers = s as Set<ExecutableElement>
         }
@@ -50,19 +50,19 @@ class TypedComponentProcessor : GeneratingProcessor() {
         // generate each module
 
         modules.forEach { elem ->
-            val module = elem.getAnnotation(ComponentModule::class.java)
+            val module = elem.getAnnotation(Module::class.java)
             val comps = components
                     .filter { e ->
                         //TODO does not work with repeatable annotations
                         //TODO clean up, no need to compute the annotation all the time
-                        e.getAnnotationsByType(TypedComponent::class.java)
+                        e.getAnnotationsByType(Component::class.java)
                                 .any {
                                     it.extractModuleTypeMirror().asElement().qualifiedName() == elem.qualifiedName()
                                 }
                     }
             val provides = providers
                     .filter { e ->
-                        e.getAnnotationsByType(TypedProvide::class.java)
+                        e.getAnnotationsByType(Provide::class.java)
                                 .any {
                                     it.extractModuleTypeMirror().asElement().qualifiedName() == elem.qualifiedName()
                                 }
@@ -88,21 +88,21 @@ class TypedComponentProcessor : GeneratingProcessor() {
         }
     }
 
-    private fun TypedComponent.extractModuleTypeMirror(): DeclaredType = try {
+    private fun Component.extractModuleTypeMirror(): DeclaredType = try {
         module
         error("Should have thrown")
     } catch (e: MirroredTypeException) {
         e.typeMirror
     } as DeclaredType
 
-    private fun TypedProvide.extractModuleTypeMirror(): DeclaredType = try {
+    private fun Provide.extractModuleTypeMirror(): DeclaredType = try {
         module
         error("Should have thrown")
     } catch (e: MirroredTypeException) {
         e.typeMirror
     } as DeclaredType
 
-    private fun ComponentModule.extractDependenciesTypeMirror(): List<TypeMirror> = try {
+    private fun Module.extractDependenciesTypeMirror(): List<TypeMirror> = try {
         dependencies
         error("Should have thrown")
     } catch (e: MirroredTypesException) {
@@ -110,7 +110,7 @@ class TypedComponentProcessor : GeneratingProcessor() {
     }
 
 
-    private fun ComponentModule.extractExtendTypeMirror(): TypeMirror = try {
+    private fun Module.extractExtendTypeMirror(): TypeMirror = try {
         extend
         error("Should have thrown")
     } catch (e: MirroredTypeException) {

@@ -4,7 +4,7 @@ import de.earley.kompanionDI.codegen.TypedComponentProcessor
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-class TypedComponentTest {
+class ComponentTest {
 
     @Test
     fun `kapt test`() {
@@ -14,17 +14,17 @@ class TypedComponentTest {
             import de.earley.kompanionDI.codegen.*
 
             interface IFoo
-            @TypedComponent(ServiceDI::class) class Foo : IFoo
-            @TypedComponent(TestServiceDI::class) class TestFoo : IFoo
+            @Component(ServiceDI::class) class Foo : IFoo
+            @Component(TestServiceDI::class) class TestFoo : IFoo
             
-            @TypedComponent(AppDI::class) class Bar
+            @Component(AppDI::class) class Bar
             
             interface Baz
-            @TypedProvide(AppDI::class) fun provide(foo: IFoo): Baz = object : Baz {}
+            @Provide(AppDI::class) fun provide(foo: IFoo): Baz = object : Baz {}
 
-            @ComponentModule object ServiceDI
-            @ComponentModule([ServiceDI::class]) object AppDI
-            @ComponentModule(extend = ServiceDI::class) object TestServiceDI
+            @Module object ServiceDI
+            @Module([ServiceDI::class]) object AppDI
+            @Module(extend = ServiceDI::class) object TestServiceDI
             """.trimIndent())
 
         val result = KotlinCompilation().apply {

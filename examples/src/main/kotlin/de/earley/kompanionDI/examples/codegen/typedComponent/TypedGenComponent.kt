@@ -2,9 +2,9 @@ package de.earley.kompanionDI.examples.codegen.typedComponent
 
 import de.earley.kompanionDI.Context
 import de.earley.kompanionDI.KompanionDI
-import de.earley.kompanionDI.codegen.ComponentModule
-import de.earley.kompanionDI.codegen.TypedComponent
-import de.earley.kompanionDI.codegen.TypedProvide
+import de.earley.kompanionDI.codegen.Module
+import de.earley.kompanionDI.codegen.Component
+import de.earley.kompanionDI.codegen.Provide
 import de.earley.kompanionDI.mocking.MockMap
 import de.earley.kompanionDI.mocking.mock
 import de.earley.kompanionDI.providers.singleton
@@ -14,12 +14,12 @@ interface ServiceA {
     fun a(): String
 }
 
-@TypedComponent(ServicesDI::class)
+@Component(ServicesDI::class)
 class ServiceAImpl : ServiceA {
     override fun a(): String = "prod a"
 }
 
-@TypedComponent(TestServicesDI::class)
+@Component(TestServicesDI::class)
 class TestService : ServiceA {
     override fun a(): String = "test a"
 }
@@ -28,7 +28,7 @@ interface ServiceB {
     fun b(): String
 }
 
-@TypedComponent(ServicesDI::class)
+@Component(ServicesDI::class)
 class ServiceBImpl(private val a: ServiceA) : ServiceB {
     override fun b(): String = "b: " + a.a()
 }
@@ -37,11 +37,11 @@ interface HttpService {
     fun get(): String
 }
 
-@TypedProvide(ServicesDI::class) fun provide(a: ServiceA): HttpService = object : HttpService {
+@Provide(ServicesDI::class) fun provide(a: ServiceA): HttpService = object : HttpService {
     override fun get(): String = "http <${a.a()}>"
 }
 
-@TypedComponent(AppDI::class)
+@Component(AppDI::class)
 class App(
         private val b: ServiceB,
         private val httpService: HttpService
@@ -51,13 +51,13 @@ class App(
     }
 }
 
-@ComponentModule
+@Module
 object ServicesDI
 
-@ComponentModule([ServicesDI::class])
+@Module([ServicesDI::class])
 object AppDI
 
-@ComponentModule(extend = ServicesDI::class)
+@Module(extend = ServicesDI::class)
 object TestServicesDI
 
 fun main() {

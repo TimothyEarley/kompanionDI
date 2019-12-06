@@ -47,7 +47,9 @@ internal fun providerCodegen(provider: ProviderSpec, profile: TypeName): Propert
 
 
     val call = when (provider.constructor.kind) {
-        ElementKind.METHOD -> provider.constructor.simpleName //TODO what about the package?
+        //TODO what about the package?
+        //TODO if we detect a function is returning a provider, we can use that (-> is this a good way to allow for singleton, etc.?)
+        ElementKind.METHOD -> provider.constructor.simpleName
         ElementKind.CONSTRUCTOR -> provider.clazz.qualifiedName()
         ElementKind.STATIC_INIT -> TODO()
         ElementKind.INSTANCE_INIT -> TODO()
