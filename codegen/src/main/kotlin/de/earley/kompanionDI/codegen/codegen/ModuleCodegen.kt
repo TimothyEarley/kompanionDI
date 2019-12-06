@@ -2,7 +2,6 @@ package de.earley.kompanionDI.codegen.codegen
 
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.asTypeName
 
 fun moduleCodegen(
         packageName: String,
@@ -10,13 +9,13 @@ fun moduleCodegen(
         providers: List<ProviderSpec>,
         profile: TypeName,
         interfaces: List<InterfaceSpec>,
-        inheritFrom: TypeName? = null
+        extend: TypeName? = null
 ): FileSpec {
     val spec = (name + "Spec")
     val impl = (name + "Impl")
 
     return FileSpec.builder(packageName, impl)
             .addType(interfaceSpec(spec, providers, profile))
-            .addType(implementationSpec(impl, spec.toTypeName(), interfaces, providers, profile, inheritFrom))
+            .addType(implementationSpec(impl, spec.toTypeName(), interfaces, providers, profile, extend))
             .build()
 }

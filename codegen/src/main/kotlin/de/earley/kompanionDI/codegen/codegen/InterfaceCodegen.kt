@@ -1,9 +1,15 @@
 package de.earley.kompanionDI.codegen.codegen
 
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.Dynamic
+import com.squareup.kotlinpoet.LambdaTypeName
 import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.TypeVariableName
+import com.squareup.kotlinpoet.WildcardTypeName
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.TypeMirror
@@ -26,7 +32,15 @@ class InterfaceSpec private constructor(
     )
 }
 
-fun TypeElement.variableName(): String = (asType() as DeclaredType).variableName()
+fun TypeName.variableName(): String = when (this) {
+    is ClassName -> variableName()
+    Dynamic -> TODO()
+    is LambdaTypeName -> TODO()
+    is ParameterizedTypeName -> TODO()
+    is TypeVariableName -> TODO()
+    is WildcardTypeName -> TODO()
+}
+fun ClassName.variableName(): String = simpleName.variableName()
 fun DeclaredType.variableName(): String = asElement().simpleName.toString().variableName()
 private fun String.variableName(): String = first().toLowerCase() + drop(1)
 

@@ -11,17 +11,21 @@ class TypedComponentTest {
 
         val source = SourceFile.kotlin("Test.kt", """
             package test
-            import de.earley.kompanionDI.codegen.ComponentModule
-            import de.earley.kompanionDI.codegen.TypedComponent
+            import de.earley.kompanionDI.codegen.*
 
             interface IFoo
             @TypedComponent(ServiceDI::class) class Foo : IFoo
             @TypedComponent(TestServiceDI::class) class TestFoo : IFoo
+            
             @TypedComponent(AppDI::class) class Bar
+            
+            interface Baz
+            @TypedProvide(AppDI::class) fun provide(foo: IFoo): Baz = object : Baz {}
+
             @ComponentModule object ServiceDI
             @ComponentModule([ServiceDI::class]) object AppDI
-            @ComponentModule(inheritFrom = ServiceDI::class) object TestServiceDI
-        """.trimIndent())
+            @ComponentModule(extend = ServiceDI::class) object TestServiceDI
+            """.trimIndent())
 
         val result = KotlinCompilation().apply {
             sources = listOf(source)
